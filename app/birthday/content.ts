@@ -27,8 +27,8 @@ export const book: {
       "somehow you keep making life a little",
       "better just by being in it. ♡",
     ],
-    photo: "/book/photos/cover-laugh.jpg",
-    pos: "50% 30%",
+    photo: "/book/photos/cover-walk.jpg",
+    pos: "50% 72%",
     caption: "I love you!",
   },
   chapters: [
