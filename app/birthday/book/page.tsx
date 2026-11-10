@@ -11,12 +11,12 @@ const pages: Page[] = [
   ...book.chapters.map((_, n) => ({ kind: "chapter", n }) as Page),
 ];
 
-function Photo({ src }: { src?: string }) {
+function Photo({ src, pos }: { src?: string; pos?: string }) {
   return (
     <div className="photo">
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt="" draggable={false} />
+        <img src={src} alt="" draggable={false} style={{ objectPosition: pos }} />
       ) : (
         <span>your photo here</span>
       )}
@@ -55,7 +55,7 @@ function Spread({ i }: { i: number }) {
           </div>
           <div className="sp-stripes" />
           <div className="sp-polaroid cover">
-            <Photo src={book.cover.photo} />
+            <Photo src={book.cover.photo} pos={book.cover.pos} />
             <StickerImg s="favorite" rot={-2} />
             <StickerImg s="heart" rot={-8} />
             <StickerImg s="stars" rot={0} />
@@ -68,11 +68,12 @@ function Spread({ i }: { i: number }) {
           return (
             <>
               <div className="sp-polaroid chap" style={{ ["--r" as string]: `${p.n % 2 ? -4 : 4}deg` }}>
-                <Photo src={c.photo} />
+                <Photo src={c.photo} pos={c.pos} />
                 <StickerImg s={c.sticker} rot={p.n % 2 ? 6 : -4} />
                 {c.caption && <div className="cap">{c.caption}</div>}
               </div>
-              <div className="sp-label">{c.label}</div>
+              <div className="sp-num-label">{c.num}</div>
+              <div className="sp-label">{c.title}</div>
               <div className="sp-text chap">{c.text}</div>
               <div className="sp-num">{i + 1} / {pages.length}</div>
             </>

@@ -1,20 +1,22 @@
 // Edit this file to personalise the book.
-// Put your photos in public/book/photos/ and reference them as "/book/photos/<file>".
-// Leave `photo` empty to show a "your photo here" placeholder.
+// Photos live in public/book/photos/ and are referenced as "/book/photos/<file>".
+// `pos` is the CSS object-position used when the photo is cropped to fit its frame.
 
 export type Sticker = "heart" | "stars" | "cupcake" | "favorite" | "envelope";
 
 export type Chapter = {
-  label: string; // small heading above the text
+  num: string; // small line above the title
+  title: string; // script heading
   text: string;
   photo?: string;
+  pos?: string;
   sticker: Sticker;
   caption?: string; // written under the polaroid
 };
 
 export const book: {
   age: string;
-  cover: { greeting: string[]; photo: string; caption: string };
+  cover: { greeting: string[]; photo: string; pos?: string; caption: string };
   chapters: Chapter[];
 } = {
   age: "20",
@@ -25,40 +27,66 @@ export const book: {
       "somehow you keep making life a little",
       "better just by being in it. ♡",
     ],
-    photo: "",
+    photo: "/book/photos/cover-laugh.jpg",
+    pos: "50% 30%",
     caption: "I love you!",
   },
   chapters: [
     {
-      label: "chapter one",
-      text: "It's kind of funny how a whole year can pass without you even realizing it. There have been so many versions of us packed into these past few months: random plans, stupid jokes, quiet moments, and days that somehow became unforgettable.",
+      num: "Chapter 01",
+      title: "The beginning",
+      text: "Who knew our random chats, endless Haa, Achaaa and Okayyy would become such a beautiful part of our lives? ❤️",
+      photo: "/book/photos/ch1-thane.jpg",
+      pos: "50% 38%",
       sticker: "heart",
     },
     {
-      label: "chapter two",
-      text: "I hope today reminds you just how loved you are and how much brighter you make the lives of the people around you.",
+      num: "Chapter 02",
+      title: "Our language",
+      text: "From addressing each other as Mis Mansi and Mr. Das to calling each other Mithudiiiii, Doba, Chatora and Chatori! What a fun journey it's been! 😂❤️",
+      photo: "/book/photos/ch2-balcony.jpg",
+      pos: "50% 62%",
       sticker: "stars",
     },
     {
-      label: "chapter three",
-      text: "I could keep a little box of everything from this year. It would probably be filled with blurry pictures, ridiculous conversations, tiny surprises, and all the moments that meant more than they seemed to at the time.",
+      num: "Chapter 03",
+      title: "Little surprises",
+      text: "You always say 'no gifts,' but seeing your smile is worth breaking every rule. Some smiles are just too precious not to miss! ❤️",
+      photo: "/book/photos/ch3-surprise.jpg",
+      pos: "50% 62%",
       sticker: "cupcake",
     },
     {
-      label: "chapter four",
-      text: "For now, I just want you to enjoy being celebrated today because you absolutely deserve it.",
-      sticker: "favorite",
-    },
-    {
-      label: "chapter five",
-      text: "Write a favourite memory here: the place, the day, the little detail only the two of you remember.",
+      num: "Chapter 04",
+      title: "Little adventures",
+      text: "From train timings and platforms to getting home safe, and dreaming up random trips—every little moment with you has become my favorite memory ❤️",
+      photo: "/book/photos/ch4-train.jpg",
+      pos: "60% 50%",
       sticker: "heart",
     },
     {
-      label: "chapter six",
-      text: "And just like that, another little chapter becomes a memory. I hope you always remember how loved you are, not just today, but in all the ordinary moments in between. Whatever comes next, I'm really glad I get to be a part of it.",
+      num: "Chapter 05",
+      title: "Everyday care",
+      text: "Uth jaana, khana kha lena, time pe aana and ghar pahoch kar batana. Somewhere, we became each other's little routine. ❤️",
+      photo: "/book/photos/ch5-hands.jpg",
+      pos: "50% 45%",
+      sticker: "favorite",
+    },
+    {
+      num: "Chapter 06",
+      title: "A thousand memories",
+      text: "Not every beautiful moment made it into a photograph, but every photograph brings back a thousand little feelings. ✨",
+      photo: "/book/photos/ch6-mirror.jpg",
+      pos: "40% 50%",
+      sticker: "stars",
+    },
+    {
+      num: "Chapter 07",
+      title: "Just for you",
+      text: "Never lose your beautiful smile, your crazy little personality and the dreams in your eyes. Here's to you, Mansi, and many more beautiful memories. Happy Birthday! ♡",
+      photo: "/book/photos/ch7-you.jpg",
+      pos: "62% 40%",
       sticker: "envelope",
-      caption: "here's to us",
     },
   ],
 };

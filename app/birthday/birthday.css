@@ -66,12 +66,14 @@
 }
 .sp-polaroid .photo { width: 100%; height: 100%; background: #e9dfd3 center / cover; display: grid; place-items: center; text-align: center; font-size: 4.4cqw; color: #a88; }
 .sp-polaroid .photo img { width: 100%; height: 100%; object-fit: cover; }
+.sp-polaroid .photo { overflow: hidden; }
 .sp-polaroid .cap { position: absolute; left: 0; right: 0; bottom: 3.6cqw; text-align: center; font-size: 4.6cqw; }
 .sp-polaroid.cover { left: 27.5%; top: 50%; width: 49.6%; height: 34%; --r: 5deg; }
-.sp-polaroid.chap { left: 22%; top: 6%; width: 56%; height: 41%; }
+.sp-polaroid.chap { left: 22%; top: 6.5%; width: 56%; height: 44.5%; }
 
-.sp-label { left: 0; right: 0; top: 50%; text-align: center; font-family: "Mrs Saint Delafield", cursive; font-size: 9cqw; line-height: 1; }
-.sp-text.chap { top: 57%; }
+.sp-num-label { left: 0; right: 0; top: 54%; text-align: center; font-size: 4cqw; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.75; }
+.sp-label { left: 0; right: 0; top: 56.5%; text-align: center; font-family: "Mrs Saint Delafield", cursive; font-size: 10.5cqw; line-height: 1.1; }
+.sp-text.chap { top: 66%; }
 .sp-num { right: 7%; bottom: 3.5%; font-family: "DM Serif Display", Georgia, serif; font-size: 5cqw; opacity: 0.7; }
 
 /* ---- controls ---- */
