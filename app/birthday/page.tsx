@@ -37,7 +37,7 @@ export default function BirthdayPage() {
 
   const openCard = () => {
     setOpen(true);
-    setTimeout(() => router.push("/birthday/letter"), 700);
+    setTimeout(() => router.push("/birthday/book"), 700);
   };
 
   return (
