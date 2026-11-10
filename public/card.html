@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en"><head>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<title>Happy Birthday Mansi</title>
+<style>html,body{margin:0;height:100%}</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Gaegu:wght@400;700&family=Mrs+Saint+Delafield&display=swap">
+<style>
+/* Concept: a maroon room, a card on the table, then a ring-bound notebook of chapters.
+   Single deliberate look (maroon + cream paper), set explicitly in both themes. */
+:root {
+  --maroon: #702426;
+  --ink: #7a2326;
+  --paper: #f4f1ea;
+  --cream: #fbf7ef;
+  --display: "DM Serif Display", Georgia, serif;
+  --script: "Mrs Saint Delafield", "Snell Roundhand", cursive;
+  --hand: Gaegu, "Comic Sans MS", cursive;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  background: var(--maroon); color: #fff; font-family: var(--hand);
+  overflow: hidden; user-select: none; -webkit-tap-highlight-color: transparent;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; transition: opacity .6s; }
+.screen[hidden] { display: none !important; }
+.screen.fade { opacity: 0; }
+
+/* ---------- cover ---------- */
+.stagebox { position: relative; flex: none; }
+.stage { position: absolute; left: 0; top: 0; width: 640px; height: 420px; border: 0; padding: 0; background: none; cursor: pointer; transform-origin: 0 0; font: inherit; color: inherit; }
+.stage img { position: absolute; display: block; max-width: none; }
+.envelope { position: absolute; z-index: 2; left: 118px; top: 14px; width: 395px; height: 368px; transform: scale(.9) rotate(-8deg); }
+.envelope img { position: absolute; }
+.env-back { left: 0; top: 0; width: 395px; height: 368px; }
+.env-front { left: 25px; top: 161px; width: 345px; height: 207px; z-index: 3; }
+.card { position: absolute; z-index: 2; left: 45px; top: 82px; width: 262px; height: 185px; background: #fff url(birthday/619b416958c9800a9515015a949fd6bb.png) center / cover; box-shadow: 0 2px 8px rgba(0,0,0,.18); display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 14px; font-family: var(--script); font-size: 46px; line-height: .9; color: #111; transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+.card span:last-child { margin-left: 10px; }
+.card.open { transform: translateY(-60px); }
+.cta { position: absolute; left: 0; right: 0; top: 372px; text-align: center; font-size: 22px; color: #fff; }
+.stage:hover .cta { text-decoration: underline; }
+.stage:focus-visible, .bk-btn:focus-visible { outline: 2px dashed #fff; outline-offset: 8px; }
+
+/* ---------- book ---------- */
+.bk-book { --w: min(calc(100vw - 32px), calc((100dvh - 110px) * .692)); position: relative; width: var(--w); aspect-ratio: 423 / 611; perspective: 2200px; cursor: pointer; touch-action: pan-y; flex: none; }
+.bk-clip { position: absolute; top: 0; height: 100%; overflow: hidden; }
+.bk-clip.left { left: 0; width: 50%; z-index: 2; }
+.bk-full { position: absolute; inset: 0; }
+.bk-flipper { position: absolute; top: 0; left: 50%; width: 50%; height: 100%; transform-origin: 0 50%; transform-style: preserve-3d; transition: transform .85s cubic-bezier(.45,.05,.25,1); z-index: 3; }
+.bk-face { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.bk-face.back { transform: rotateY(180deg); }
+.bk-face::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(0,0,0,.12), rgba(0,0,0,0) 18%); }
+.bk-face.back::after { background: linear-gradient(270deg, rgba(0,0,0,.12), rgba(0,0,0,0) 18%); }
+.sp { position: absolute; top: 0; height: 100%; width: 200%; container-type: inline-size; color: var(--ink); }
+.bk-clip .sp, .bk-face.back .sp { left: 0; }
+.bk-face.front .sp { left: -100%; }
+.bk-full .sp { width: 100%; left: 0; }
+.sp-paper { position: absolute; inset: 0; background: url(book/notebook.png) center / 100% 100% no-repeat; }
+.sp > * { position: absolute; }
+.sp img { display: block; max-width: none; }
+.sp-age { left: 0; right: 0; top: 7%; text-align: center; font-family: var(--display); font-size: 33cqw; line-height: 1; letter-spacing: -.02em; }
+.sp-cupcake { left: 59%; top: 12%; width: 17%; }
+.sp-text { left: 9%; right: 9%; text-align: center; font-size: 4.5cqw; line-height: 1.3; letter-spacing: -.01em; }
+.sp-text.cover { top: 29%; white-space: nowrap; font-size: 4.4cqw; }
+.sp-caption { left: 0; right: 0; top: 91%; text-align: center; font-size: 4.8cqw; }
+.sp-stripes { left: 22.5%; top: 51%; width: 52%; height: 36%; background: url(book/stripes.png) center / cover; }
+.sp-polaroid { background: var(--cream); padding: 3.6cqw 3.6cqw 13cqw; box-shadow: 0 1.2cqw 3.5cqw rgba(60,20,20,.28); transform: rotate(var(--r,4deg)); }
+.sp-polaroid .photo { position: relative; width: 100%; height: 100%; background: #e9dfd3; overflow: hidden; }
+.sp-polaroid .photo img { position: static; width: 100%; height: 100%; object-fit: cover; }
+.sp-polaroid .cap { left: 0; right: 0; bottom: 3.6cqw; text-align: center; font-size: 4.6cqw; }
+.sp-polaroid.cover { left: 27.5%; top: 50%; width: 49.6%; height: 34%; --r: 5deg; }
+.sp-polaroid.chap { left: 22%; top: 6.5%; width: 56%; height: 44.5%; }
+.sp-polaroid .stk { position: absolute; }
+.sp-num-label { left: 0; right: 0; top: 54%; text-align: center; font-size: 4cqw; letter-spacing: .18em; text-transform: uppercase; opacity: .75; }
+.sp-label { left: 0; right: 0; top: 56.5%; text-align: center; font-family: var(--script); font-size: 10.5cqw; line-height: 1.1; }
+.sp-text.chap { top: 66%; }
+.sp-num { right: 7%; bottom: 3.5%; font-family: var(--display); font-size: 5cqw; opacity: .7; }
+
+.bk-controls { display: flex; align-items: center; gap: 18px; flex: none; }
+.bk-btn { background: none; border: 0; color: #fff; font: inherit; font-size: 26px; cursor: pointer; padding: 0 10px; opacity: .9; }
+.bk-btn:disabled { opacity: .25; cursor: default; }
+.bk-dots { display: flex; gap: 8px; }
+.bk-dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.35); transition: background .3s; }
+.bk-dots i.on { background: #fff; }
+.bk-hint { font-size: 18px; opacity: .8; margin: 0; min-height: 1.2em; flex: none; }
+@media (prefers-reduced-motion: reduce) { .bk-flipper { transition-duration: .01s; } .card { transition: none; } }
+</style>
+
+</head><body>
+<div class="screen" id="cover">
+  <div class="stagebox" id="stagebox"><button class="stage" id="stage" aria-label="Open the birthday card">
+    <div class="envelope">
+      <img class="env-back" src="birthday/7a6cc6c8b1774a7bdd4de327deb1d8e4.png" alt="" draggable="false">
+      <div class="card" id="card"><span>Happy</span><span>Birthday</span></div>
+      <img class="env-front" src="birthday/cb8830f7e0107e1d5048332ba94cd60a.png" alt="" draggable="false">
+    </div>
+    <img src="birthday/94bf35e163d58907ec6d8ecd923ffddf.png" alt="" draggable="false" style="left:0;top:210px;width:225px;height:165px;z-index:5">
+    <img src="birthday/d133dc4292b117ff91e22ed638810781.png" alt="" draggable="false" style="left:393px;top:55px;width:240px;height:320px;z-index:5">
+    <img src="birthday/74993871601702c518b93cd14e252ab1.png" alt="" draggable="false" style="left:172px;top:227px;width:54px;height:44px;z-index:6">
+    <img src="birthday/35bbaceb2b42e9daea562ec022646bde.png" alt="" draggable="false" style="left:400px;top:227px;width:36px;height:34px;z-index:6">
+    <img src="hearts.png" alt="" draggable="false" style="left:381px;top:275px;width:39px;height:39px;z-index:6;filter:saturate(.55) brightness(1.45)">
+    <span class="cta">click me!</span>
+  </button></div>
+</div>
+
+<div class="screen" id="bookScreen" hidden>
+  <div class="bk-book" id="bookEl"></div>
+  <div class="bk-controls">
+    <button class="bk-btn" id="prev" aria-label="Previous page">‹</button>
+    <div class="bk-dots" id="dots" aria-hidden="true"></div>
+    <button class="bk-btn" id="next" aria-label="Next page">›</button>
+  </div>
+  <p class="bk-hint" id="hint">swipe or tap to turn the page</p>
+</div>
+
+<script>
+const B = "book", P = "book/photos";
+const data = {
+  age: "20",
+  cover: { greeting: ["Happy Birthday baby!","Another year of being you, and","somehow you keep making life a little","better just by being in it. ♡"], photo: P+"/cover-laugh.jpg", pos: "50% 30%", caption: "I love you!" },
+  chapters: [
+    { num:"Chapter 01", title:"The beginning", text:"Who knew our random chats, endless Haa, Achaaa and Okayyy would become such a beautiful part of our lives? ❤️", photo:P+"/ch1-thane.jpg", pos:"50% 38%", sticker:"heart" },
+    { num:"Chapter 02", title:"Our language", text:"From addressing each other as Mis Mansi and Mr. Das to calling each other Mithudiiiii, Doba, Chatora and Chatori! What a fun journey it's been! 😂❤️", photo:P+"/ch2-balcony.jpg", pos:"50% 62%", sticker:"stars" },
+    { num:"Chapter 03", title:"Little surprises", text:"You always say 'no gifts,' but seeing your smile is worth breaking every rule. Some smiles are just too precious not to miss! ❤️", photo:P+"/ch3-surprise.jpg", pos:"50% 62%", sticker:"cupcake" },
+    { num:"Chapter 04", title:"Little adventures", text:"From train timings and platforms to getting home safe, and dreaming up random trips—every little moment with you has become my favorite memory ❤️", photo:P+"/ch4-train.jpg", pos:"60% 50%", sticker:"heart" },
+    { num:"Chapter 05", title:"Everyday care", text:"Uth jaana, khana kha lena, time pe aana and ghar pahoch kar batana. Somewhere, we became each other's little routine. ❤️", photo:P+"/ch5-hands.jpg", pos:"50% 45%", sticker:"favorite" },
+    { num:"Chapter 06", title:"A thousand memories", text:"Not every beautiful moment made it into a photograph, but every photograph brings back a thousand little feelings. ✨", photo:P+"/ch6-mirror.jpg", pos:"40% 50%", sticker:"stars" },
+    { num:"Chapter 07", title:"Just for you", text:"Never lose your beautiful smile, your crazy little personality and the dreams in your eyes. Here's to you, Mansi, and many more beautiful memories. Happy Birthday! ♡", photo:P+"/ch7-you.jpg", pos:"62% 40%", sticker:"envelope" }
+  ]
+};
+const pages = [{ cover: true }, ...data.chapters.map((c, n) => ({ n }))];
+const stickers = {
+  heart:{src:B+"/heart.png",st:"left:-6%;top:-5%;width:17%"},
+  stars:{src:B+"/stars.png",st:"right:-8%;bottom:-6%;width:34%"},
+  cupcake:{src:B+"/cupcake.png",st:"right:-9%;top:-9%;width:30%"},
+  favorite:{src:B+"/favorite.png",st:"right:-8%;top:-12%;width:48%"},
+  envelope:{src:B+"/envelope.png",st:"right:-12%;bottom:-12%;width:30%"}
+};
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const stk = (k, rot) => `<img class="stk" draggable="false" alt="" src="${stickers[k].src}" style="${stickers[k].st};transform:rotate(${rot}deg)">`;
+const photo = (src, pos) => `<div class="photo"><img draggable="false" alt="" src="${src}" style="object-position:${pos||"50% 50%"}"></div>`;
+
+function spread(i) {
+  const p = pages[i];
+  if (p.cover) {
+    const c = data.cover;
+    return `<div class="sp"><div class="sp-paper"></div>
+      <div class="sp-age">${data.age}</div>
+      <img class="sp-cupcake" src="${B}/cupcake.png" alt="" draggable="false">
+      <div class="sp-text cover">${c.greeting.map(l => `<div>${esc(l)}</div>`).join("")}</div>
+      <div class="sp-stripes"></div>
+      <div class="sp-polaroid cover">${photo(c.photo, c.pos)}${stk("favorite",-2)}${stk("heart",-8)}${stk("stars",0)}</div>
+      <div class="sp-caption">${esc(c.caption)}</div></div>`;
+  }
+  const c = data.chapters[p.n];
+  return `<div class="sp"><div class="sp-paper"></div>
+    <div class="sp-polaroid chap" style="--r:${p.n % 2 ? -4 : 4}deg">${photo(c.photo, c.pos)}${stk(c.sticker, p.n % 2 ? 6 : -4)}</div>
+    <div class="sp-num-label">${c.num}</div><div class="sp-label">${esc(c.title)}</div>
+    <div class="sp-text chap">${esc(c.text)}</div><div class="sp-num">${i+1} / ${pages.length}</div></div>`;
+}
+
+const $ = id => document.getElementById(id);
+const bookEl = $("bookEl"), prev = $("prev"), next = $("next"), dots = $("dots"), hint = $("hint");
+let page = 0, busy = false;
+dots.innerHTML = pages.map(() => "<i></i>").join("");
+
+function paint(shown) {
+  [...dots.children].forEach((d, i) => d.classList.toggle("on", i === shown));
+  prev.disabled = shown === 0; next.disabled = shown === pages.length - 1;
+}
+function show() { bookEl.innerHTML = `<div class="bk-full">${spread(page)}</div>`; paint(page); hint.innerHTML = page === 0 ? "swipe or tap to turn the page" : "&nbsp;"; }
+
+function go(dir) {
+  const to = page + dir;
+  if (busy || to < 0 || to >= pages.length) return;
+  busy = true; hint.innerHTML = "&nbsp;";
+  const lo = Math.min(page, to), start = dir === 1 ? 0 : -180, end = dir === 1 ? -180 : 0;
+  bookEl.innerHTML = `<div class="bk-full">${spread(lo+1)}</div><div class="bk-clip left">${spread(lo)}</div>
+    <div class="bk-flipper" id="fl" style="transform:rotateY(${start}deg)"><div class="bk-face front">${spread(lo)}</div><div class="bk-face back">${spread(lo+1)}</div></div>`;
+  paint(to);
+  const fl = $("fl");
+  requestAnimationFrame(() => requestAnimationFrame(() => { fl.style.transform = `rotateY(${end}deg)`; }));
+  setTimeout(() => { page = to; busy = false; show(); }, 900);
+}
+bookEl.addEventListener("click", e => { const r = bookEl.getBoundingClientRect(); go(e.clientX - r.left > r.width / 2 ? 1 : -1); });
+let tx = null;
+bookEl.addEventListener("touchstart", e => { tx = e.touches[0].clientX; }, { passive: true });
+bookEl.addEventListener("touchend", e => { if (tx == null) return; const dx = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(dx) > 40) { e.preventDefault(); go(dx < 0 ? 1 : -1); } });
+prev.onclick = () => go(-1); next.onclick = () => go(1);
+addEventListener("keydown", e => { if (!$("bookScreen").hidden) { if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); } });
+
+// cover: fit the 640x420 stage to the viewport, open the card, then show the book
+const stage = $("stage");
+function fit() { const s = Math.min(1, (innerWidth - 32) / 640, (innerHeight - 40) / 420); const bx = $("stagebox"); bx.style.width = 640 * s + "px"; bx.style.height = 420 * s + "px"; stage.style.transform = `scale(${s})`; }
+fit(); addEventListener("resize", fit);
+stage.onclick = () => {
+  $("card").classList.add("open");
+  setTimeout(() => { $("cover").classList.add("fade"); }, 450);
+  setTimeout(() => { $("cover").hidden = true; $("bookScreen").hidden = false; show(); }, 1050);
+};
+</script>
+</body></html>
