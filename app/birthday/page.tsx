@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 /**
@@ -31,21 +32,21 @@ const layers: Layer[] = [
 ];
 
 export default function BirthdayPage() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+
+  const openCard = () => {
+    setOpen(true);
+    setTimeout(() => router.push("/birthday/letter"), 700);
+  };
 
   return (
     <main className="stage-wrap">
-      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Gaegu&family=Mrs+Saint+Delafield&display=swap"
-      />
-
       <button
         type="button"
         className="stage"
         aria-label="Open the birthday card"
-        onClick={() => setOpen((o) => !o)}
+        onClick={openCard}
       >
         {/* tilted envelope group: back, paper card, front flap */}
         <div className="envelope">

@@ -1,0 +1,65 @@
+.bd-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+  background: #702426;
+  color: #fff;
+  font-family: Gaegu, "Comic Sans MS", cursive;
+  overflow-x: hidden;
+}
+.bd-inner { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center; gap: 28px; }
+.bd-paper {
+  width: 100%;
+  background: #fff url(/birthday/619b416958c9800a9515015a949fd6bb.png) center / cover;
+  color: #1a1a1a;
+  padding: 40px 36px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+  transform: rotate(-1.5deg);
+  animation: bd-rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.bd-script { font-family: "Mrs Saint Delafield", "Snell Roundhand", cursive; line-height: 1; }
+.bd-paper .bd-script { font-size: 56px; margin-bottom: 12px; }
+.bd-paper p { font-size: 22px; line-height: 1.45; margin: 0 0 14px; }
+.bd-sign { text-align: right; }
+.bd-next {
+  font-size: 22px;
+  color: #fff;
+  text-decoration: none;
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.6);
+  padding-bottom: 2px;
+}
+.bd-next:hover { border-bottom-style: solid; }
+.bd-dots { display: flex; gap: 8px; }
+.bd-dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.35); }
+.bd-dots i.on { background: #fff; }
+.bd-title { font-size: 64px; text-align: center; margin: 0; }
+.bd-polaroids { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+.bd-polaroid {
+  width: 160px;
+  background: #fbf7ef;
+  color: #3a2a2a;
+  padding: 10px 10px 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  animation: bd-rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.bd-polaroid:nth-child(1) { transform: rotate(-5deg); }
+.bd-polaroid:nth-child(2) { transform: rotate(3deg); animation-delay: 0.12s; }
+.bd-polaroid:nth-child(3) { transform: rotate(-2deg); animation-delay: 0.24s; }
+.bd-photo {
+  height: 130px;
+  display: grid;
+  place-items: center;
+  background: #e6dccb;
+  margin-bottom: 8px;
+}
+.bd-photo img { width: 80px; height: auto; opacity: 0.85; }
+.bd-polaroid b { display: block; font-weight: 400; font-size: 20px; }
+.bd-polaroid small { font-size: 15px; opacity: 0.7; }
+.bd-hero { width: 220px; height: auto; animation: bd-float 4s ease-in-out infinite; }
+.bd-hearts { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+.bd-hearts img { position: absolute; bottom: -60px; width: 30px; opacity: 0; animation: bd-heart 9s linear infinite; }
+@keyframes bd-rise { from { opacity: 0; translate: 0 24px; } to { opacity: 1; translate: 0 0; } }
+@keyframes bd-float { 50% { transform: translateY(-10px); } }
+@keyframes bd-heart { 0% { opacity: 0; transform: translateY(0); } 10% { opacity: 0.9; } 100% { opacity: 0; transform: translateY(-110vh) rotate(25deg); } }
+@media (prefers-reduced-motion: reduce) { .bd-page * { animation: none !important; } }
