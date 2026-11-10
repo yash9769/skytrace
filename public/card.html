@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta charset="utf-8">
 <title>Happy Birthday Mansi</title>
 <style>html,body{margin:0;height:100%}</style>
@@ -89,6 +89,14 @@ body {
 @media (prefers-reduced-motion: reduce) { .bk-flipper { transition-duration: .01s; } .card { transition: none; } }
 </style>
 
+<style>
+/* Locked, centred, mobile-first frame */
+html, body { position: fixed; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; overscroll-behavior: none; touch-action: none; -webkit-text-size-adjust: 100%; }
+.screen { position: fixed; inset: 0; }
+.stagebox { position: absolute; left: 50%; top: 50%; width: 640px; height: 420px; margin: -210px 0 0 -320px; transform-origin: 50% 50%; }
+.stage { touch-action: none; }
+.bk-book { touch-action: none; --w: min(calc(100vw - 24px), calc((100dvh - 110px) * .692)); }
+</style>
 </head><body>
 <div class="screen" id="cover">
   <div class="stagebox" id="stagebox"><button class="stage" id="stage" aria-label="Open the birthday card">
@@ -101,7 +109,7 @@ body {
     <img src="birthday/d133dc4292b117ff91e22ed638810781.png" alt="" draggable="false" style="left:393px;top:55px;width:240px;height:320px;z-index:5">
     <img src="birthday/74993871601702c518b93cd14e252ab1.png" alt="" draggable="false" style="left:172px;top:227px;width:54px;height:44px;z-index:6">
     <img src="birthday/35bbaceb2b42e9daea562ec022646bde.png" alt="" draggable="false" style="left:400px;top:227px;width:36px;height:34px;z-index:6">
-    <img src="hearts.png" alt="" draggable="false" style="left:381px;top:275px;width:39px;height:39px;z-index:6;filter:saturate(.55) brightness(1.45)">
+    <img src="data:image/png;base64,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/UcSABPhmD2QfTvVxigezcTx/vZ/pmt5Ammmi7tVperVIlWXqrp4fVjuTx7r62m2qMqlvLPy5LnPPPjI1sbNB3JAEgCT4dglrLIajqaPzcEHeep4c3R9OFjJeyBXPvFFc4F6+VVW85JUc9pquWrvLH/naz9ab+766+/92clBNbX4D2/8zSN/tPjNpfNzi0udqZn5vIzls7AAJsiR/yJhVVe7S1fDrbxctZJWt3+cru2sjPY87kaOx43817/lpa1LVVGs3py6dmN8307ZeiBVxddv7lz/6trWW4tnZi7Mjg8N6wfA5DhyAimrQdroX03t7al0tfdOjsgv02Z5NYdleMcXy7//m1A0U8frdVEvf+cbr94+UfWNl794fjqlxVs7638w05pfKoryy9d6K+na9kN5yrk+ejPi3XxkPAD3hiP2QJoju710ZfuddOXGO2l9uzlttTGKR7332bp38G5+/qWilf69arc+ctJqqm49mrfbn+zXG18u697iIG3l134zTbWnU9Ut88/YavZLEgCT4VBAyrJM1aBM/Y1u6re6aTDYSdP9k6lVTx37ImV7sDaY6q6WrfIHeYZY/sevv/qj8X3PPPPMg1VVLV794O2l7bmbS/mxF5vb20Un9fp5iWzrV6m9kV+7nxe8qk/+J3MBuDccCshwmCeNsvlXntqpfXMunawvpJnqbF7aOn46GHZ2frIxv3bpxsLqa4NmCeuA3KMvFUXx5MKHD/3u/OZnFqtWObq9edNh81lZw3aVf16ZWmUrFbWAAEyKQwFpPrJkdBpq0BpNHdOpuU7e8UXyw9dO33zgtb//i5d/+vH7Wq16sa6LL3XK2d/M1+HnNj8zR6Ro5wmkJSAAk6JYXl4e7VwvLS357Q3AJxp3o5UAIEBAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIERAAAgREABCBASAEAEBIKQz/mJ5eblOAHCXTCAAhPwPAAAA//+mqsKGAAAABklEQVQDAP3EvRVofq+WAAAAAElFTkSuQmCC" alt="" draggable="false" style="left:381px;top:275px;width:39px;height:39px;z-index:6;filter:saturate(.55) brightness(1.45)">
     <span class="cta">click me!</span>
   </button></div>
 </div>
@@ -192,10 +200,17 @@ bookEl.addEventListener("touchend", e => { if (tx == null) return; const dx = e.
 prev.onclick = () => go(-1); next.onclick = () => go(1);
 addEventListener("keydown", e => { if (!$("bookScreen").hidden) { if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); } });
 
+
+// Lock the view: no pinch-zoom, double-tap zoom or panning, so nothing can leave the frame.
+["gesturestart","gesturechange","gestureend"].forEach(t => document.addEventListener(t, e => e.preventDefault()));
+document.addEventListener("touchmove", e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+document.addEventListener("wheel", e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+document.addEventListener("dblclick", e => e.preventDefault());
+
 // cover: fit the 640x420 stage to the viewport, open the card, then show the book
 const stage = $("stage");
-function fit() { const s = Math.min(1, (innerWidth - 32) / 640, (innerHeight - 40) / 420); const bx = $("stagebox"); bx.style.width = 640 * s + "px"; bx.style.height = 420 * s + "px"; stage.style.transform = `scale(${s})`; }
-fit(); addEventListener("resize", fit);
+function fit() { const de = document.documentElement; const s = Math.min(1, (de.clientWidth - 24) / 640, (de.clientHeight - 40) / 420); $("stagebox").style.transform = `scale(${s})`; }
+fit(); addEventListener("resize", fit); addEventListener("orientationchange", fit);
 stage.onclick = () => {
   $("card").classList.add("open");
   setTimeout(() => { $("cover").classList.add("fade"); }, 450);
