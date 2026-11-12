@@ -219,6 +219,9 @@ html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692
 .strip::-webkit-scrollbar { display: none; }
 .frame { flex: 0 0 66%; max-width: 270px; margin: 0; scroll-snap-align: center; aspect-ratio: 3 / 4; background: #3a2b27; border-radius: 3px; overflow: hidden; box-shadow: 0 0 0 3px #2a1d19; }
 .frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.strip.var .frame { flex: 0 0 auto; max-width: none; height: clamp(250px, 44vh, 380px); aspect-ratio: auto; }
+.strip.var .frame img { width: 100%; }
+.strip-dots.count { font-size: 19px; opacity: .9; letter-spacing: .08em; }
 .strip-dots { display: flex; gap: 8px; margin: 14px 0 12px; }
 .strip-dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.35); transition: background .3s, width .3s; }
 .strip-dots i.on { background: #fff; width: 20px; border-radius: 4px; }
@@ -312,8 +315,28 @@ const mansiScroll = {
     { num:"Chapter 08", title:"Mansi, I love you for you.", text:"Not because you do everything right. I love your smile, your laughter, your madness, your stubbornness, even the little things that drive me crazy. 😂❤️\n\nI'm proud of who you are: how much you care, and how you keep going when things aren't easy.", photo:"book/photos/ms-lake.jpg", pos:"66% 40%", sticker:"heart" },
     { num:"Chapter 09", title:"You never have to be strong all the time.", text:"You deserve to be pampered, listened to and loved.\n\nI don't need fancy dates. Travelling together, sitting beside you and laughing at silly things is enough. I'll always want to see you grow and win, and I don't want either of us to lose ourselves along the way.", photo:"book/photos/ms-selfie.jpg", pos:"50% 60%", sticker:"stars" }
   ],
-  strip: { num:"Swipe through", title:"More moments", text:"More conversations, more laughter, more adventures, more stories.",
-    frames: [{ src:"book/photos/ch1-thane.jpg", pos:"50% 38%" }, "book/photos/ch3-surprise.jpg", "book/photos/ch4-train.jpg", "book/photos/ch5-hands.jpg", "book/photos/cover-walk.jpg"] },
+  strip: { num:"Swipe through", title:"More moments", text:"More conversations, more laughter, more adventures, more stories.", variable: true,
+    frames: [
+      { src:"book/photos/strip-01.jpg", ar:"562 / 1000" },
+      { src:"book/photos/strip-02.jpg", ar:"1000 / 750" },
+      { src:"book/photos/strip-03.jpg", ar:"562 / 1000" },
+      { src:"book/photos/strip-04.jpg", ar:"750 / 1000" },
+      { src:"book/photos/strip-05.jpg", ar:"750 / 1000" },
+      { src:"book/photos/strip-06.jpg", ar:"562 / 1000" },
+      { src:"book/photos/strip-07.jpg", ar:"1000 / 562" },
+      { src:"book/photos/strip-08.jpg", ar:"562 / 1000" },
+      { src:"book/photos/strip-09.jpg", ar:"562 / 1000" },
+      { src:"book/photos/strip-10.jpg", ar:"562 / 1000" },
+      { src:"book/photos/strip-11.jpg", ar:"1000 / 750" },
+      { src:"book/photos/strip-12.jpg", ar:"562 / 1000" },
+      { src:"book/photos/strip-13.jpg", ar:"562 / 1000" },
+      { src:"book/photos/strip-14.jpg", ar:"562 / 1000" },
+      { src:"book/photos/strip-15.jpg", ar:"750 / 1000" },
+      { src:"book/photos/strip-16.jpg", ar:"750 / 1000" },
+      { src:"book/photos/strip-17.jpg", ar:"1000 / 563" },
+      { src:"book/photos/strip-18.jpg", ar:"562 / 1000" },
+      { src:"book/photos/strip-19.jpg", ar:"1000 / 563" }
+    ] },
   solo: { num:"The last one", title:"I'm genuinely happy you're part of my story.", text:"I don't know what every chapter will look like, but I want to keep collecting these little moments with you.\n\nI love you, Mansi. ❤️", photo:"book/photos/ms-path.jpg", pos:"50% 42%" },
   end: { caption: "I love you ♡" }
 };
@@ -364,7 +387,7 @@ function burst(n = 18) {
     document.body.appendChild(h); setTimeout(() => h.remove(), 4800);
   }
 }
-function preload(d) { if (d === mansiData) [...mansiScroll.chapters.map(c => c.photo), mansiScroll.solo.photo, ...mansiScroll.strip.frames.map(f => f.src || f)].forEach(u => { new Image().src = u; });
+function preload(d) { if (d === mansiData) [...mansiScroll.chapters.map(c => c.photo), mansiScroll.solo.photo, ...mansiScroll.strip.frames.slice(0, 4).map(f => f.src || f)].forEach(u => { new Image().src = u; });
   ["book/notebook.png", "book/stripes.png", d.cover.photo, ...d.chapters.map(c => c.photo)].filter(Boolean).forEach(u => { new Image().src = u; }); }
 const bookEl = $("bookEl"), prev = $("prev"), next = $("next"), dots = $("dots"), hint = $("hint");
 let page = 0, busy = false;
@@ -429,8 +452,8 @@ function renderScroll(d, o = {}) {
     ${d.chapters.map((c, n) => card(c, n, stk(c.sticker, n % 2 ? 6 : -4))).join("")}
     <section class="fam-stripsec reveal">
       <div class="fam-num">${d.strip.num}</div><h2 class="fam-title">${esc(d.strip.title)}</h2>
-      <div class="strip" id="strip" aria-label="Photo strip, swipe sideways">${d.strip.frames.map(f => `<figure class="frame"><img alt="" draggable="false" src="${f.src || f}" style="object-position:${f.pos || "50% 50%"}"></figure>`).join("")}</div>
-      <div class="strip-dots" id="stripDots" aria-hidden="true">${d.strip.frames.map(() => "<i></i>").join("")}</div>
+      <div class="strip${d.strip.variable ? " var" : ""}" id="strip" aria-label="Photo strip, swipe sideways">${d.strip.frames.map(f => `<figure class="frame"${f.ar ? ` style="aspect-ratio:${f.ar}"` : ""}><img alt="" draggable="false"${f.ar ? ' loading="lazy"' : ""} src="${f.src || f}" style="object-position:${f.pos || "50% 50%"}"></figure>`).join("")}</div>
+      <div class="strip-dots${d.strip.frames.length > 10 ? " count" : ""}" id="stripDots" aria-hidden="true">${d.strip.frames.length > 10 ? `<span>1 / ${d.strip.frames.length}</span>` : d.strip.frames.map(() => "<i></i>").join("")}</div>
       <p class="fam-text">${esc(d.strip.text)}</p>
       <div class="fam-swipe">swipe → </div>
     </section>
@@ -440,8 +463,12 @@ function renderScroll(d, o = {}) {
   const sc = $("famScreen"); sc.scrollTop = 0;
   $("famTop").onclick = () => sc.scrollTo({ top: 0, behavior: "smooth" });
   if ($("famBook")) $("famBook").onclick = backToBook;
-  const strip = $("strip"), dotEls = [...$("stripDots").children];
-  const setDot = () => { const f = strip.firstElementChild, step = f.getBoundingClientRect().width + 12; const i = Math.min(dotEls.length - 1, Math.round(strip.scrollLeft / step)); dotEls.forEach((e, k) => e.classList.toggle("on", k === i)); };
+  const strip = $("strip"), dotEls = [...$("stripDots").children], total = strip.children.length;
+  const setDot = () => {
+    const r = strip.getBoundingClientRect(), mid = r.left + r.width / 2; let best = 0, bd = 1e9;
+    [...strip.children].forEach((f, k) => { const b = f.getBoundingClientRect(), d = Math.abs(b.left + b.width / 2 - mid); if (d < bd) { bd = d; best = k; } });
+    if (total > 10) dotEls[0].textContent = (best + 1) + " / " + total; else dotEls.forEach((e, k) => e.classList.toggle("on", k === best));
+  };
   strip.addEventListener("scroll", setDot, { passive: true }); setDot();
   let done = false;
   if (!("IntersectionObserver" in window)) { sc.querySelectorAll(".reveal").forEach(e => e.classList.add("in")); return; }
