@@ -124,7 +124,7 @@ body { background: radial-gradient(120% 85% at 50% 38%, #873230 0%, #702426 52%,
 /* drifting hearts behind everything */
 #ambient { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
 #ambient img { position: absolute; bottom: -12vh; width: var(--s, 26px); opacity: 0; animation: drift var(--d, 18s) linear var(--w, 0s) infinite; }
-@keyframes drift { 0% { transform: translate(0, 0) rotate(-8deg); opacity: 0; } 12% { opacity: .16; } 88% { opacity: .16; } 100% { transform: translate(var(--x, 20px), -125vh) rotate(14deg); opacity: 0; } }
+@keyframes drift { 0% { transform: translate(0, 0) rotate(-8deg); opacity: 0; } 12% { opacity: var(--o, .16); } 88% { opacity: var(--o, .16); } 100% { transform: translate(var(--x, 20px), -125vh) rotate(14deg); opacity: 0; } }
 
 /* PIN */
 .pin-title { text-shadow: 0 2px 18px rgba(0,0,0,.25); }
@@ -162,10 +162,20 @@ body { background: radial-gradient(120% 85% at 50% 38%, #873230 0%, #702426 52%,
 .burst { position: fixed; bottom: -40px; width: var(--s); pointer-events: none; z-index: 5; animation: burst var(--d) cubic-bezier(.2,.6,.3,1) var(--w) both; }
 @keyframes burst { 0% { transform: translate(0,0) rotate(0) scale(.5); opacity: 0; } 12% { opacity: 1; } 100% { transform: translate(var(--x), -112vh) rotate(var(--r)) scale(1); opacity: 0; } }
 
+/* ---------- Family edition: navy + stars instead of maroon + hearts ---------- */
+html.family { background: #141d33; }
+html.family body { --maroon: #22304f; --ink: #27375e; background: radial-gradient(120% 85% at 50% 38%, #34466f 0%, #22304f 52%, #141d33 100%); }
+html.family .sp-stripes { filter: hue-rotate(222deg) saturate(.75) brightness(1.05); }
+html.family .bk-book { filter: drop-shadow(0 18px 26px rgba(6,10,24,.45)); }
+html.family .bk-shade { background: #0c1224; }
+html.family #ambient img { --o: .22; }
+.edition { margin: 0; font-size: 19px; letter-spacing: .14em; text-transform: uppercase; opacity: .8; flex: none; }
+.edition[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .screen.enter, #bookScreen.enter .bk-book, .stage, .cta, .pin-dots i.on, .bk-shade { animation: none; }
   #ambient, .burst { display: none; }
 }
+html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692)); }
 </style>
 </head><body>
 <div id="ambient" aria-hidden="true"></div>
@@ -196,6 +206,7 @@ body { background: radial-gradient(120% 85% at 50% 38%, #873230 0%, #702426 52%,
 </div>
 
 <div class="screen" id="bookScreen" hidden>
+  <p class="edition" id="edition" hidden>★ from your family ★</p>
   <div class="bk-book" id="bookEl"></div>
   <div class="bk-controls">
     <button class="bk-btn" id="prev" aria-label="Previous page">‹</button>
@@ -227,9 +238,9 @@ const familyData = {
   age: "20",
   cover: { greeting: ["Happy Birthday Mansi!", "Twenty years of laughter,", "love and so many memories.", "From all of us, with love ♡"], photo: "", pos: "50% 50%", caption: "With love, your family" },
   chapters: [
-    { num:"Chapter 01", title:"Little Mansi", text:"Write a favourite childhood memory here: the place, the day, the little detail the family still laughs about.", photo:"", sticker:"heart" },
-    { num:"Chapter 02", title:"Growing up", text:"Write about how Mansi has grown, what makes her proud, and what the family loves most about her.", photo:"", sticker:"stars" },
-    { num:"Chapter 03", title:"Family moments", text:"Write about a trip, a festival or an ordinary evening that became a family favourite.", photo:"", sticker:"cupcake" },
+    { num:"Chapter 01", title:"Little Mansi", text:"Write a favourite childhood memory here: the place, the day, the little detail the family still laughs about.", photo:"", sticker:"stars" },
+    { num:"Chapter 02", title:"Growing up", text:"Write about how Mansi has grown, what makes her proud, and what the family loves most about her.", photo:"", sticker:"cupcake" },
+    { num:"Chapter 03", title:"Family moments", text:"Write about a trip, a festival or an ordinary evening that became a family favourite.", photo:"", sticker:"stars" },
     { num:"Chapter 04", title:"Wishes for you", text:"Write the family's birthday wishes for Mansi here. Happy Birthday! ♡", photo:"", sticker:"envelope" }
   ]
 };
@@ -255,7 +266,7 @@ function spread(i) {
       <img class="sp-cupcake" src="${B}/cupcake.png" alt="" draggable="false">
       <div class="sp-text cover">${c.greeting.map(l => `<div>${esc(l)}</div>`).join("")}</div>
       <div class="sp-stripes"></div>
-      <div class="sp-polaroid cover">${photo(c.photo, c.pos)}${stk("favorite",-2)}${stk("heart",-8)}${stk("stars",0)}</div>
+      <div class="sp-polaroid cover">${photo(c.photo, c.pos)}${mode === "family" ? stk("envelope", -6) + stk("cupcake", 8) : stk("favorite",-2) + stk("heart",-8) + stk("stars",0)}</div>
       <div class="sp-caption">${esc(c.caption)}</div></div>`;
   }
   const c = data.chapters[p.n];
@@ -269,11 +280,13 @@ const $ = id => document.getElementById(id);
 const buzz = p => { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} };
 const enter = el => { el.classList.remove("enter"); void el.offsetWidth; el.classList.add("enter"); };
 const rnd = (a, b) => a + Math.random() * (b - a);
-// ambient hearts
-$("ambient").innerHTML = Array.from({ length: 9 }, (_, i) => `<img alt="" src="book/heart.png" style="left:${(i * 11 + rnd(2, 9)).toFixed(1)}%;--s:${rnd(16, 34).toFixed(0)}px;--d:${rnd(15, 26).toFixed(1)}s;--w:${(-rnd(0, 22)).toFixed(1)}s;--x:${rnd(-40, 40).toFixed(0)}px">`).join("");
+// ambient drifting shapes: hearts for Mansi, stars for the family edition
+let mode = "mansi";
+const deco = () => mode === "family" ? ["book/stars.png", "book/cupcake.png"] : ["book/heart.png"];
+function ambient() { const d = deco(); $("ambient").innerHTML = Array.from({ length: 9 }, (_, i) => `<img alt="" src="${d[0]}" style="left:${(i * 11 + rnd(2, 9)).toFixed(1)}%;--s:${rnd(mode === "family" ? 26 : 16, mode === "family" ? 46 : 34).toFixed(0)}px;--d:${rnd(15, 26).toFixed(1)}s;--w:${(-rnd(0, 22)).toFixed(1)}s;--x:${rnd(-40, 40).toFixed(0)}px">`).join(""); }
 function burst(n = 18) {
   for (let i = 0; i < n; i++) {
-    const h = new Image(); h.src = "book/heart.png"; h.alt = ""; h.className = "burst";
+    const d = deco(); const h = new Image(); h.src = d[i % d.length]; h.alt = ""; h.className = "burst";
     h.style.cssText = `left:${rnd(4, 92)}%;--s:${rnd(18, 40)}px;--d:${rnd(2.2, 3.8)}s;--w:${rnd(0, .7)}s;--x:${rnd(-60, 60)}px;--r:${rnd(-40, 40)}deg`;
     document.body.appendChild(h); setTimeout(() => h.remove(), 4800);
   }
@@ -281,7 +294,7 @@ function burst(n = 18) {
 function preload(d) { ["book/notebook.png", "book/stripes.png", d.cover.photo, ...d.chapters.map(c => c.photo)].filter(Boolean).forEach(u => { new Image().src = u; }); }
 const bookEl = $("bookEl"), prev = $("prev"), next = $("next"), dots = $("dots"), hint = $("hint");
 let page = 0, busy = false;
-function setMode(m) { data = m === "family" ? familyData : mansiData; pages = [{ cover: true }, ...data.chapters.map((c, n) => ({ n }))]; page = 0; dots.innerHTML = pages.map(() => "<i></i>").join(""); }
+function setMode(m) { mode = m; document.documentElement.classList.toggle("family", m === "family"); $("edition").hidden = m !== "family"; document.querySelector(".cta").textContent = m === "family" ? "tap to open" : "click me!"; ambient(); data = m === "family" ? familyData : mansiData; pages = [{ cover: true }, ...data.chapters.map((c, n) => ({ n }))]; page = 0; dots.innerHTML = pages.map(() => "<i></i>").join(""); }
 setMode("mansi");
 
 function paint(shown) {
