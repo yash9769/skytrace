@@ -175,6 +175,10 @@ html.family #ambient img { --o: .22; }
   .screen.enter, #bookScreen.enter .bk-book, .stage, .cta, .pin-dots i.on, .bk-shade { animation: none; }
   #ambient, .burst { display: none; }
 }
+.home-btn { position: fixed; z-index: 20; top: calc(env(safe-area-inset-top, 0px) + 10px); left: 12px; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(251,247,239,.16); color: #fff; font: inherit; font-size: 19px; cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); box-shadow: inset 0 0 0 1px rgba(251,247,239,.22); touch-action: manipulation; transition: background .15s, transform .15s; }
+.home-btn:active { background: rgba(251,247,239,.32); transform: scale(.95); }
+.home-btn:focus-visible { outline: 2px dashed #fff; outline-offset: 3px; }
+.home-btn[hidden] { display: none; }
 html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692)); }
 
 /* ---------- Family edition: one scrolling page instead of the flip-book ---------- */
@@ -209,6 +213,8 @@ html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692
 </style>
 </head><body>
 <div id="ambient" aria-hidden="true"></div>
+<button class="home-btn" id="homeBtn" hidden aria-label="Back to the PIN screen">⌂ home</button>
+
 <div class="screen" id="pinScreen">
   <div class="pin-card">
     <div class="pin-title">Happy Birthday</div>
@@ -417,7 +423,7 @@ function unlock(mode) {
   unlocking = true; setMode(mode); preload(data); buzz([10, 50, 18]);
   pinCard.classList.add("ok"); pinMsg.textContent = mode === "family" ? "welcome ♡" : "welcome, birthday girl ♡";
   setTimeout(() => { $("pinScreen").classList.add("fade"); }, 650);
-  setTimeout(() => { $("pinScreen").hidden = true; $("cover").hidden = false; fit(); enter($("cover")); }, 1150);
+  setTimeout(() => { $("pinScreen").hidden = true; $("cover").hidden = false; $("homeBtn").hidden = false; fit(); enter($("cover")); }, 1150);
 }
 function pinKey(k) {
   if (unlocking) return;
@@ -435,6 +441,21 @@ function pinKey(k) {
 $("pinPad").innerHTML = ["1","2","3","4","5","6","7","8","9","del","0","go"].map(k => `<button class="pin-key${k === "go" ? " go" : ""}" data-k="${k}" aria-label="${k === "del" ? "Delete" : k === "go" ? "Open" : k}">${k === "del" ? "⌫" : k === "go" ? "✓" : k}</button>`).join("");
 $("pinPad").addEventListener("click", e => { const b = e.target.closest("button"); if (b) pinKey(b.dataset.k); });
 addEventListener("keydown", e => { if ($("pinScreen").hidden) return; if (/^[0-9]$/.test(e.key)) pinKey(e.key); else if (e.key === "Backspace") pinKey("del"); else if (e.key === "Enter") pinKey("go"); });
+
+// ---------- Home: back to the PIN screen (enter the other PIN to switch version) ----------
+function goHome() {
+  buzz(8);
+  document.querySelectorAll(".burst").forEach(e => e.remove());
+  ["cover", "bookScreen", "famScreen"].forEach(id => { $(id).hidden = true; $(id).classList.remove("fade", "enter"); });
+  stage.classList.remove("opened"); $("card").classList.remove("open");
+  $("famScreen").scrollTop = 0; busy = false; page = 0;
+  setMode("mansi");
+  entry = ""; unlocking = false; drawPin();
+  pinCard.classList.remove("ok", "shake"); pinMsg.innerHTML = "&nbsp;";
+  $("pinScreen").classList.remove("fade"); $("pinScreen").hidden = false; enter($("pinScreen"));
+  $("homeBtn").hidden = true;
+}
+$("homeBtn").addEventListener("click", goHome);
 drawPin(); enter($("pinScreen"));
 </script>
 </body></html>
