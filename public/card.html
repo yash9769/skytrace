@@ -113,8 +113,98 @@ html, body { position: fixed; inset: 0; width: 100%; height: 100%; margin: 0; pa
 .pin-card.shake { animation: pinshake .45s; }
 @keyframes pinshake { 20%,60% { transform: translateX(-9px); } 40%,80% { transform: translateX(9px); } }
 @media (prefers-reduced-motion: reduce) { .pin-card.shake { animation: none; } }
+
+/* ---------- Polish: depth, motion, feedback ---------- */
+html { background: #561a1c; }
+body { background: radial-gradient(120% 85% at 50% 38%, #873230 0%, #702426 52%, #551a1c 100%); }
+.screen { z-index: 1; }
+.screen.enter { animation: scr-in .55s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes scr-in { from { opacity: 0; transform: translateY(14px) scale(.985); } to { opacity: 1; transform: none; } }
+
+/* drifting hearts behind everything */
+#ambient { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+#ambient img { position: absolute; bottom: -12vh; width: var(--s, 26px); opacity: 0; animation: drift var(--d, 18s) linear var(--w, 0s) infinite; }
+@keyframes drift { 0% { transform: translate(0, 0) rotate(-8deg); opacity: 0; } 12% { opacity: var(--o, .16); } 88% { opacity: var(--o, .16); } 100% { transform: translate(var(--x, 20px), -125vh) rotate(14deg); opacity: 0; } }
+
+/* PIN */
+.pin-title { text-shadow: 0 2px 18px rgba(0,0,0,.25); }
+.pin-key { background: rgba(251,247,239,.1); box-shadow: inset 0 0 0 1px rgba(251,247,239,.14), 0 3px 10px rgba(40,8,10,.22); }
+.pin-key.go { box-shadow: 0 4px 14px rgba(40,8,10,.3); }
+.pin-dots i.on { animation: dot-pop .22s ease-out; }
+@keyframes dot-pop { from { transform: scale(.4); } 60% { transform: scale(1.4); } to { transform: scale(1.15); } }
+.pin-card.ok .pin-dots i { background: #fff; border-color: #fff; transform: scale(1.25); }
+.pin-card.ok .pin-msg { color: #fff; }
+.pin-card.ok .pin-pad { opacity: .35; pointer-events: none; transition: opacity .3s; }
+
+/* cover */
+.stage { animation: float 4.5s ease-in-out infinite; }
+.stage.opened { animation-play-state: paused; }
+.stage:active .envelope { filter: brightness(.97); }
+@keyframes float { 50% { transform: translateY(-7px); } }
+.cta { animation: cta 1.8s ease-in-out infinite; }
+@keyframes cta { 50% { opacity: .55; transform: translateY(3px); } }
+
+/* book */
+.bk-book { filter: drop-shadow(0 18px 26px rgba(30,6,8,.38)); }
+#bookScreen.enter .bk-book { animation: book-in .7s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes book-in { from { opacity: 0; transform: translateY(26px) scale(.94) rotate(-1.5deg); } to { opacity: 1; transform: none; } }
+.bk-shade { position: absolute; inset: 4% 4.5% 4% 50%; background: #2a0c0e; border-radius: 6px; opacity: 0; pointer-events: none; z-index: 1; animation: shade .85s ease-in-out; }
+@keyframes shade { 50% { opacity: .2; } }
+.bk-btn { min-width: 48px; min-height: 48px; border-radius: 50%; transition: background .15s, transform .15s, opacity .2s; }
+.bk-btn:not(:disabled):active { background: rgba(255,255,255,.14); transform: scale(.9); }
+.bk-dots i { transition: background .3s, transform .3s, width .3s; }
+.bk-dots i.on { width: 20px; border-radius: 4px; }
+.bk-hint { transition: opacity .3s; }
+.bk-again { background: var(--cream); color: var(--ink); border: 0; border-radius: 999px; padding: 6px 18px; font: inherit; font-size: 19px; cursor: pointer; box-shadow: 0 4px 14px rgba(40,8,10,.3); touch-action: manipulation; }
+.bk-again:active { transform: scale(.95); }
+
+/* celebration on the last page */
+.burst { position: fixed; bottom: -40px; width: var(--s); pointer-events: none; z-index: 5; animation: burst var(--d) cubic-bezier(.2,.6,.3,1) var(--w) both; }
+@keyframes burst { 0% { transform: translate(0,0) rotate(0) scale(.5); opacity: 0; } 12% { opacity: 1; } 100% { transform: translate(var(--x), -112vh) rotate(var(--r)) scale(1); opacity: 0; } }
+
+/* ---------- Family edition: navy + stars instead of maroon + hearts ---------- */
+html.family { background: #141d33; }
+html.family body { --maroon: #22304f; --ink: #27375e; background: radial-gradient(120% 85% at 50% 38%, #34466f 0%, #22304f 52%, #141d33 100%); }
+html.family .sp-stripes { filter: hue-rotate(222deg) saturate(.75) brightness(1.05); }
+html.family .bk-book { filter: drop-shadow(0 18px 26px rgba(6,10,24,.45)); }
+html.family .bk-shade { background: #0c1224; }
+html.family #ambient img { --o: .22; }
+.edition { margin: 0; font-size: 19px; letter-spacing: .14em; text-transform: uppercase; opacity: .8; flex: none; }
+.edition[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .screen.enter, #bookScreen.enter .bk-book, .stage, .cta, .pin-dots i.on, .bk-shade { animation: none; }
+  #ambient, .burst { display: none; }
+}
+html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692)); }
+
+/* ---------- Family edition: one scrolling page instead of the flip-book ---------- */
+#famScreen { display: block; overflow-y: auto; overflow-x: hidden; touch-action: pan-y; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+#famScreen::-webkit-scrollbar { display: none; }
+.fam { width: min(100%, 440px); margin: 0 auto; box-sizing: border-box; padding: max(28px, env(safe-area-inset-top, 0px)) 18px max(48px, env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: center; gap: 34px; }
+.fam-head { min-height: calc(100dvh - 60px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
+.fam-tag { margin: 0; font-size: 18px; letter-spacing: .14em; text-transform: uppercase; opacity: .8; }
+.fam-age { position: relative; font-family: var(--display); font-size: 150px; line-height: .95; color: var(--cream); }
+.fam-age img { position: absolute; right: -44px; bottom: 8px; width: 74px; }
+.fam-greet { font-size: 23px; line-height: 1.35; }
+.fam-scroll { margin-top: 26px; font-size: 19px; opacity: .8; animation: cta 1.8s ease-in-out infinite; }
+.fam-card { width: 100%; box-sizing: border-box; background: var(--cream) url(birthday/619b416958c9800a9515015a949fd6bb.png) center / cover; color: var(--ink); border-radius: 6px; padding: 20px 20px 26px; box-shadow: 0 14px 30px rgba(6,10,24,.4); text-align: center; transform: rotate(var(--r, 0deg)); }
+.fam-photo { position: relative; background: #fff; padding: 10px 10px 34px; box-shadow: 0 4px 14px rgba(20,30,60,.22); transform: rotate(var(--pr, 0deg)); margin: 4px 6px 18px; }
+.fam-photo .ph { aspect-ratio: 4 / 4.4; background: #e9dfd3; display: grid; place-items: center; color: #a88; font-size: 19px; overflow: hidden; }
+.fam-photo .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fam-photo .stk { position: absolute; }
+.fam-photo .stk[src*="envelope"] { right: -3% !important; bottom: -5% !important; }
+.fam-photo .stk[src*="cupcake"], .fam-photo .stk[src*="stars"] { right: -3% !important; }
+.fam-num { font-size: 17px; letter-spacing: .18em; text-transform: uppercase; opacity: .75; }
+.fam-title { font-family: var(--script); font-size: 46px; line-height: 1.15; margin: 2px 0 8px; }
+.fam-text { margin: 0; font-size: 21px; line-height: 1.4; }
+.fam-end { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 20px 0 10px; text-align: center; }
+.fam-sign { font-family: var(--script); font-size: 50px; line-height: 1.1; }
+.reveal { opacity: 0; translate: 0 26px; transition: opacity .7s ease, translate .7s cubic-bezier(.2,.8,.2,1); }
+.reveal.in { opacity: 1; translate: 0 0; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; translate: none; transition: none; } .fam-scroll { animation: none; } }
 </style>
 </head><body>
+<div id="ambient" aria-hidden="true"></div>
 <div class="screen" id="pinScreen">
   <div class="pin-card">
     <div class="pin-title">Happy Birthday</div>
@@ -141,7 +231,10 @@ html, body { position: fixed; inset: 0; width: 100%; height: 100%; margin: 0; pa
   </button></div>
 </div>
 
+<div class="screen" id="famScreen" hidden><div class="fam" id="fam"></div></div>
+
 <div class="screen" id="bookScreen" hidden>
+  <p class="edition" id="edition" hidden>★ from your family ★</p>
   <div class="bk-book" id="bookEl"></div>
   <div class="bk-controls">
     <button class="bk-btn" id="prev" aria-label="Previous page">‹</button>
@@ -173,9 +266,9 @@ const familyData = {
   age: "20",
   cover: { greeting: ["Happy Birthday Mansi!", "Twenty years of laughter,", "love and so many memories.", "From all of us, with love ♡"], photo: "", pos: "50% 50%", caption: "With love, your family" },
   chapters: [
-    { num:"Chapter 01", title:"Little Mansi", text:"Write a favourite childhood memory here: the place, the day, the little detail the family still laughs about.", photo:"", sticker:"heart" },
-    { num:"Chapter 02", title:"Growing up", text:"Write about how Mansi has grown, what makes her proud, and what the family loves most about her.", photo:"", sticker:"stars" },
-    { num:"Chapter 03", title:"Family moments", text:"Write about a trip, a festival or an ordinary evening that became a family favourite.", photo:"", sticker:"cupcake" },
+    { num:"Chapter 01", title:"Little Mansi", text:"Write a favourite childhood memory here: the place, the day, the little detail the family still laughs about.", photo:"", sticker:"stars" },
+    { num:"Chapter 02", title:"Growing up", text:"Write about how Mansi has grown, what makes her proud, and what the family loves most about her.", photo:"", sticker:"cupcake" },
+    { num:"Chapter 03", title:"Family moments", text:"Write about a trip, a festival or an ordinary evening that became a family favourite.", photo:"", sticker:"stars" },
     { num:"Chapter 04", title:"Wishes for you", text:"Write the family's birthday wishes for Mansi here. Happy Birthday! ♡", photo:"", sticker:"envelope" }
   ]
 };
@@ -201,7 +294,7 @@ function spread(i) {
       <img class="sp-cupcake" src="${B}/cupcake.png" alt="" draggable="false">
       <div class="sp-text cover">${c.greeting.map(l => `<div>${esc(l)}</div>`).join("")}</div>
       <div class="sp-stripes"></div>
-      <div class="sp-polaroid cover">${photo(c.photo, c.pos)}${stk("favorite",-2)}${stk("heart",-8)}${stk("stars",0)}</div>
+      <div class="sp-polaroid cover">${photo(c.photo, c.pos)}${mode === "family" ? stk("envelope", -6) + stk("cupcake", 8) : stk("favorite",-2) + stk("heart",-8) + stk("stars",0)}</div>
       <div class="sp-caption">${esc(c.caption)}</div></div>`;
   }
   const c = data.chapters[p.n];
@@ -212,28 +305,45 @@ function spread(i) {
 }
 
 const $ = id => document.getElementById(id);
+const buzz = p => { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} };
+const enter = el => { el.classList.remove("enter"); void el.offsetWidth; el.classList.add("enter"); };
+const rnd = (a, b) => a + Math.random() * (b - a);
+// ambient drifting shapes: hearts for Mansi, stars for the family edition
+let mode = "mansi";
+const deco = () => mode === "family" ? ["book/stars.png", "book/cupcake.png"] : ["book/heart.png"];
+function ambient() { const d = deco(); $("ambient").innerHTML = Array.from({ length: 9 }, (_, i) => `<img alt="" src="${d[0]}" style="left:${(i * 11 + rnd(2, 9)).toFixed(1)}%;--s:${rnd(mode === "family" ? 26 : 16, mode === "family" ? 46 : 34).toFixed(0)}px;--d:${rnd(15, 26).toFixed(1)}s;--w:${(-rnd(0, 22)).toFixed(1)}s;--x:${rnd(-40, 40).toFixed(0)}px">`).join(""); }
+function burst(n = 18) {
+  for (let i = 0; i < n; i++) {
+    const d = deco(); const h = new Image(); h.src = d[i % d.length]; h.alt = ""; h.className = "burst";
+    h.style.cssText = `left:${rnd(4, 92)}%;--s:${rnd(18, 40)}px;--d:${rnd(2.2, 3.8)}s;--w:${rnd(0, .7)}s;--x:${rnd(-60, 60)}px;--r:${rnd(-40, 40)}deg`;
+    document.body.appendChild(h); setTimeout(() => h.remove(), 4800);
+  }
+}
+function preload(d) { ["book/notebook.png", "book/stripes.png", d.cover.photo, ...d.chapters.map(c => c.photo)].filter(Boolean).forEach(u => { new Image().src = u; }); }
 const bookEl = $("bookEl"), prev = $("prev"), next = $("next"), dots = $("dots"), hint = $("hint");
 let page = 0, busy = false;
-function setMode(m) { data = m === "family" ? familyData : mansiData; pages = [{ cover: true }, ...data.chapters.map((c, n) => ({ n }))]; page = 0; dots.innerHTML = pages.map(() => "<i></i>").join(""); }
+function setMode(m) { mode = m; document.documentElement.classList.toggle("family", m === "family"); document.querySelector(".cta").textContent = m === "family" ? "tap to open" : "click me!"; ambient(); data = m === "family" ? familyData : mansiData; pages = [{ cover: true }, ...data.chapters.map((c, n) => ({ n }))]; page = 0; dots.innerHTML = pages.map(() => "<i></i>").join(""); }
 setMode("mansi");
 
 function paint(shown) {
   [...dots.children].forEach((d, i) => d.classList.toggle("on", i === shown));
   prev.disabled = shown === 0; next.disabled = shown === pages.length - 1;
 }
-function show() { bookEl.innerHTML = `<div class="bk-full">${spread(page)}</div>`; paint(page); hint.innerHTML = page === 0 ? "swipe or tap to turn the page" : "&nbsp;"; }
+function show() { bookEl.innerHTML = `<div class="bk-full">${spread(page)}</div>`; paint(page); hint.innerHTML = page === 0 ? "swipe or tap to turn the page" : page === pages.length - 1 ? '<button class="bk-again" id="again">↺ read it again</button>' : "&nbsp;"; }
+hint.addEventListener("click", e => { if (e.target.closest("#again") && !busy) { page = 0; show(); enter($("bookScreen")); } });
 
 function go(dir) {
   const to = page + dir;
   if (busy || to < 0 || to >= pages.length) return;
   busy = true; hint.innerHTML = "&nbsp;";
   const lo = Math.min(page, to), start = dir === 1 ? 0 : -180, end = dir === 1 ? -180 : 0;
-  bookEl.innerHTML = `<div class="bk-full">${spread(lo+1)}</div><div class="bk-clip left">${spread(lo)}</div>
+  bookEl.innerHTML = `<div class="bk-full">${spread(lo+1)}</div><div class="bk-shade"></div><div class="bk-clip left">${spread(lo)}</div>
     <div class="bk-flipper" id="fl" style="transform:rotateY(${start}deg)"><div class="bk-face front">${spread(lo)}</div><div class="bk-face back">${spread(lo+1)}</div></div>`;
   paint(to);
   const fl = $("fl");
   requestAnimationFrame(() => requestAnimationFrame(() => { fl.style.transform = `rotateY(${end}deg)`; }));
-  setTimeout(() => { page = to; busy = false; show(); }, 900);
+  buzz(6);
+  setTimeout(() => { page = to; busy = false; show(); if (to === pages.length - 1 && dir === 1) { burst(); buzz([12, 60, 12]); } }, 900);
 }
 bookEl.addEventListener("click", e => { const r = bookEl.getBoundingClientRect(); go(e.clientX - r.left > r.width / 2 ? 1 : -1); });
 let tx = null;
@@ -249,14 +359,44 @@ document.addEventListener("touchmove", e => { if (e.touches.length > 1) e.preven
 document.addEventListener("wheel", e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
 document.addEventListener("dblclick", e => e.preventDefault());
 
+
+// ---------- Family edition: scrolling page ----------
+function renderFamily() {
+  const d = familyData, ph = (src, pos) => src ? `<div class="ph"><img alt="" draggable="false" src="${src}" style="object-position:${pos || "50% 50%"}"></div>` : `<div class="ph">photo coming soon</div>`;
+  $("fam").innerHTML = `
+    <header class="fam-head">
+      <p class="fam-tag">★ from your family ★</p>
+      <div class="fam-age">${d.age}<img alt="" src="book/cupcake.png" draggable="false"></div>
+      <div class="fam-greet">${d.cover.greeting.map(l => `<div>${esc(l)}</div>`).join("")}</div>
+      <div class="fam-scroll">scroll down ↓</div>
+    </header>
+    ${d.chapters.map((c, n) => `<article class="fam-card reveal" style="--r:${n % 2 ? .8 : -.8}deg">
+      <div class="fam-photo" style="--pr:${n % 2 ? -2.5 : 2.5}deg">${ph(c.photo, c.pos)}${stk(c.sticker, n % 2 ? 6 : -4)}</div>
+      <div class="fam-num">${c.num}</div><h2 class="fam-title">${esc(c.title)}</h2><p class="fam-text">${esc(c.text)}</p>
+    </article>`).join("")}
+    <footer class="fam-end reveal" id="famEnd"><div class="fam-sign">${esc(d.cover.caption)}</div><button class="bk-again" id="famTop">↑ back to the top</button></footer>`;
+  const sc = $("famScreen"); sc.scrollTop = 0;
+  $("famTop").onclick = () => sc.scrollTo({ top: 0, behavior: "smooth" });
+  let done = false;
+  if (!("IntersectionObserver" in window)) { sc.querySelectorAll(".reveal").forEach(e => e.classList.add("in")); return; }
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add("in"); io.unobserve(e.target);
+    if (e.target.id === "famEnd" && !done) { done = true; burst(); buzz([12, 60, 12]); }
+  }), { root: sc, threshold: .18 });
+  sc.querySelectorAll(".reveal").forEach(e => io.observe(e));
+}
+
 // cover: fit the 640x420 stage to the viewport, open the card, then show the book
 const stage = $("stage");
 function fit() { const de = document.documentElement; const s = Math.min(1, (de.clientWidth - 24) / 640, (de.clientHeight - 40) / 420); $("stagebox").style.transform = `scale(${s})`; }
 fit(); addEventListener("resize", fit); addEventListener("orientationchange", fit);
 stage.onclick = () => {
+  if (stage.classList.contains("opened")) return;
+  stage.classList.add("opened"); buzz(10);
   $("card").classList.add("open");
   setTimeout(() => { $("cover").classList.add("fade"); }, 450);
-  setTimeout(() => { $("cover").hidden = true; $("bookScreen").hidden = false; show(); }, 1050);
+  setTimeout(() => { $("cover").hidden = true; if (mode === "family") { $("famScreen").hidden = false; renderFamily(); enter($("famScreen")); } else { $("bookScreen").hidden = false; show(); enter($("bookScreen")); } }, 1050);
 };
 
 // ---------- PIN gate ----------
@@ -267,20 +407,29 @@ const PIN_MAX = 6;
 let entry = "";
 const pinDots = $("pinDots"), pinMsg = $("pinMsg"), pinCard = document.querySelector(".pin-card");
 function drawPin() { pinDots.innerHTML = Array.from({ length: Math.max(3, entry.length) }, (_, i) => `<i class="${i < entry.length ? "on" : ""}"></i>`).join(""); }
+let unlocking = false;
+function unlock(mode) {
+  unlocking = true; setMode(mode); preload(data); buzz([10, 50, 18]);
+  pinCard.classList.add("ok"); pinMsg.textContent = mode === "family" ? "welcome ♡" : "welcome, birthday girl ♡";
+  setTimeout(() => { $("pinScreen").classList.add("fade"); }, 650);
+  setTimeout(() => { $("pinScreen").hidden = true; $("cover").hidden = false; fit(); enter($("cover")); }, 1150);
+}
 function pinKey(k) {
+  if (unlocking) return;
+  buzz(k === "go" ? 0 : 8);
   if (k === "del") entry = entry.slice(0, -1);
   else if (k === "go") {
     const mode = PINS[entry];
-    if (mode) { setMode(mode); $("pinScreen").hidden = true; $("cover").hidden = false; fit(); return; }
+    if (mode) { drawPin(); unlock(mode); return; }
     pinMsg.textContent = entry ? "That PIN isn't right. Try again." : "Enter your PIN first.";
-    pinCard.classList.remove("shake"); void pinCard.offsetWidth; pinCard.classList.add("shake");
+    pinCard.classList.remove("shake"); void pinCard.offsetWidth; pinCard.classList.add("shake"); buzz([30, 40, 30]);
     entry = "";
-  } else if (entry.length < PIN_MAX) { entry += k; pinMsg.innerHTML = "&nbsp;"; }
+  } else if (entry.length < PIN_MAX) { entry += k; pinMsg.innerHTML = "&nbsp;"; if (PINS[entry]) { drawPin(); unlock(PINS[entry]); return; } }
   drawPin();
 }
 $("pinPad").innerHTML = ["1","2","3","4","5","6","7","8","9","del","0","go"].map(k => `<button class="pin-key${k === "go" ? " go" : ""}" data-k="${k}" aria-label="${k === "del" ? "Delete" : k === "go" ? "Open" : k}">${k === "del" ? "⌫" : k === "go" ? "✓" : k}</button>`).join("");
 $("pinPad").addEventListener("click", e => { const b = e.target.closest("button"); if (b) pinKey(b.dataset.k); });
 addEventListener("keydown", e => { if ($("pinScreen").hidden) return; if (/^[0-9]$/.test(e.key)) pinKey(e.key); else if (e.key === "Backspace") pinKey("del"); else if (e.key === "Enter") pinKey("go"); });
-drawPin();
+drawPin(); enter($("pinScreen"));
 </script>
 </body></html>
