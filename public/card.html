@@ -280,7 +280,7 @@ html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692
 <script>
 const B = "book", P = "book/photos";
 const mansiData = {
-  age: "20",
+  age: "23",
   cover: { greeting: ["Happy Birthday baby!","Another year of being you, and","somehow you keep making life a little","better just by being in it. ♡"], photo: P+"/cover-walk.jpg", pos: "50% 72%", caption: "I love you!" },
   chapters: [
     { num:"Chapter 01", title:"The beginning", text:"Who knew our random chats, endless Haa, Achaaa and Okayyy would become such a beautiful part of our lives? ❤️", photo:P+"/ch1-thane.jpg", pos:"50% 38%", sticker:"heart" },
@@ -296,8 +296,8 @@ const mansiData = {
 // Family version: one scrolling page. Edit text here; photos live in book/photos/.
 //  front page (photo 1) -> chapters (photos 2-5) -> horizontal film strip -> solo photo.
 const familyData = {
-  age: "20",
-  cover: { greeting: ["Happy Birthday Mansi!", "Twenty years of laughter,", "love and so many memories.", "From all of us, with love ♡"], photo: "book/photos/family-cover.jpg", pos: "50% 30%", caption: "With love, your family" },
+  age: "23",
+  cover: { greeting: ["Happy Birthday Mansi!", "Twenty-three years of laughter,", "love and so many memories.", "From all of us, with love ♡"], photo: "book/photos/family-cover.jpg", pos: "50% 30%", caption: "With love, your family" },
   chapters: [
     { num:"Chapter 01", title:"Pure fun", text:"Happy birthday Mansi, we all love you so much. We are happy that we got you. You complete our family.", photo:"book/photos/fam-2-booth.jpg", pos:"50% 42%", sticker:"stars" },
     { num:"Chapter 02", title:"Selfie time", text:"Happy birthday Mansi, we all love you so much. We are happy that we got you. You complete our family.", photo:"book/photos/fam-3-selfie.jpg", pos:"50% 28%", sticker:"cupcake" },
@@ -338,7 +338,7 @@ const mansiScroll = {
       { src:"book/photos/strip-19.jpg", ar:"1000 / 563" }
     ] },
   solo: { num:"The last one", title:"I'm genuinely happy you're part of my story.", text:"I don't know what every chapter will look like, but I want to keep collecting these little moments with you.\n\nI love you, Mansi. ❤️", photo:"book/photos/ms-path.jpg", pos:"50% 42%" },
-  end: { caption: "I love you ♡" }
+  end: { caption: "Love you forever ♡" }
 };
 let data = mansiData;
 let pages = [{ cover: true }, ...data.chapters.map((c, n) => ({ n }))];
