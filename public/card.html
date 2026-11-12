@@ -233,6 +233,35 @@ html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692
 .fam.nohead { padding-top: 74px; }
 .fam-btns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 .bk-hint .bk-again + .bk-again { margin-left: 10px; }
+/* ---------- hidden client editor (plain, readable form UI) ---------- */
+#ed { position: fixed; inset: 0; z-index: 200; background: #f6f1ea; color: #2a1d1d; font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow-y: auto; overflow-x: hidden; touch-action: pan-y; padding-bottom: 96px; }
+#ed, #ed * { box-sizing: border-box; user-select: text; -webkit-user-select: text; }
+.ed-top { position: sticky; top: 0; z-index: 2; display: flex; gap: 8px; align-items: center; padding: calc(env(safe-area-inset-top, 0px) + 10px) 12px 10px; background: #702426; color: #fff; }
+.ed-top b { flex: 1; font-size: 17px; }
+.ed-btn { border: 0; border-radius: 10px; padding: 10px 14px; font: inherit; font-weight: 600; background: #fff; color: #702426; cursor: pointer; box-shadow: inset 0 0 0 1px #d7c9b8; touch-action: manipulation; }
+.ed-btn.pri { background: #1f6b43; color: #fff; box-shadow: none; }
+.ed-btn.sm { padding: 6px 10px; font-size: 14px; }
+.ed-btn.danger { background: #fde8e6; color: #a32018; }
+.ed-btn:disabled { opacity: .55; }
+.ed-tabs { display: flex; gap: 6px; padding: 10px 12px; overflow-x: auto; background: #ece4d9; }
+.ed-tab { flex: none; padding: 8px 14px; border-radius: 999px; border: 1px solid #c9bcab; background: #fff; font: inherit; color: #2a1d1d; }
+.ed-tab.on { background: #702426; color: #fff; border-color: #702426; }
+.ed-body { padding: 12px; max-width: 640px; margin: 0 auto; }
+.ed-body h2 { font-size: 18px; margin: 20px 0 8px; color: #702426; }
+.ed-card { background: #fff; border-radius: 14px; padding: 12px; margin: 0 0 14px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.ed-card h3 { margin: 0 0 4px; font-size: 16px; }
+.ed-card label { display: block; font-size: 13px; color: #6b5a58; margin: 10px 0 4px; }
+.ed-card input[type=text], .ed-card textarea, .ed-card select, .ed-card input[type=password], .ed-login input { width: 100%; padding: 10px; border: 1px solid #cdbfae; border-radius: 8px; font: 16px system-ui, sans-serif; background: #fffdf9; color: #2a1d1d; }
+.ed-card textarea { min-height: 120px; resize: vertical; }
+.ed-photo { display: flex; gap: 10px; align-items: flex-start; }
+.ed-photo img { width: 84px; height: 84px; object-fit: cover; border-radius: 8px; background: #e9dfd3; flex: none; }
+.ed-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.ed-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; margin-top: 8px; }
+.ed-thumb { background: #f3ece2; border-radius: 10px; padding: 6px; }
+.ed-thumb img { width: 100%; height: 90px; object-fit: cover; border-radius: 6px; display: block; background: #e9dfd3; }
+.ed-msg { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(env(safe-area-inset-bottom, 0px) + 12px); background: #222; color: #fff; z-index: 3; text-align: center; }
+.ed-login { position: fixed; inset: 0; z-index: 300; background: rgba(20,8,8,.78); display: grid; place-items: center; padding: 16px; }
+.ed-login form { background: #fff; color: #2a1d1d; border-radius: 16px; padding: 18px; width: min(340px, 100%); font: 16px system-ui, sans-serif; user-select: text; }
 </style>
 </head><body>
 <div id="ambient" aria-hidden="true"></div>
@@ -350,8 +379,10 @@ const stickers = {
   envelope:{src:B+"/envelope.png",st:"right:-12%;bottom:-12%;width:30%"}
 };
 const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const photoCache = {};
+const U = s => (typeof s === "string" && s.startsWith("fb:")) ? (photoCache[s.slice(3)] || "") : s;
 const stk = (k, rot) => `<img class="stk" draggable="false" alt="" src="${stickers[k].src}" style="${stickers[k].st};transform:rotate(${rot}deg)">`;
-const photo = (src, pos) => src ? `<div class="photo"><img draggable="false" alt="" src="${src}" style="object-position:${pos||"50% 50%"}"></div>` : `<div class="photo" style="display:grid;place-items:center;text-align:center;font-size:4.4cqw;color:#a88">photo coming soon</div>`;
+const photo = (src, pos) => U(src) ? `<div class="photo"><img draggable="false" alt="" src="${U(src)}" style="object-position:${pos||"50% 50%"}"></div>` : `<div class="photo" style="display:grid;place-items:center;text-align:center;font-size:4.4cqw;color:#a88">photo coming soon</div>`;
 
 function spread(i) {
   const p = pages[i];
@@ -387,8 +418,11 @@ function burst(n = 18) {
     document.body.appendChild(h); setTimeout(() => h.remove(), 4800);
   }
 }
-function preload(d) { if (d === mansiData) [...mansiScroll.chapters.map(c => c.photo), mansiScroll.solo.photo, ...mansiScroll.strip.frames.slice(0, 4).map(f => f.src || f)].forEach(u => { new Image().src = u; });
-  ["book/notebook.png", "book/stripes.png", d.cover.photo, ...d.chapters.map(c => c.photo)].filter(Boolean).forEach(u => { new Image().src = u; }); }
+function preload(d) {
+  const go = u => { u = U(u); if (u) new Image().src = u; };
+  if (d === mansiData) [...mansiScroll.chapters.map(c => c.photo), mansiScroll.solo.photo, ...mansiScroll.strip.frames.slice(0, 4).map(f => f.src || f)].forEach(go);
+  ["book/notebook.png", "book/stripes.png", d.cover.photo, ...d.chapters.map(c => c.photo)].forEach(go);
+}
 const bookEl = $("bookEl"), prev = $("prev"), next = $("next"), dots = $("dots"), hint = $("hint");
 let page = 0, busy = false;
 function setMode(m) { mode = m; document.documentElement.classList.toggle("family", m === "family"); document.querySelector(".cta").textContent = m === "family" ? "tap to open" : "click me!"; ambient(); data = m === "family" ? familyData : mansiData; pages = [{ cover: true }, ...data.chapters.map((c, n) => ({ n }))]; page = 0; dots.innerHTML = pages.map(() => "<i></i>").join(""); }
@@ -436,7 +470,7 @@ document.addEventListener("dblclick", e => e.preventDefault());
 
 // ---------- Family edition: scrolling page ----------
 function renderScroll(d, o = {}) {
-  const head = o.head !== false, ph = (src, pos) => src ? `<div class="ph"><img alt="" draggable="false" src="${src}" style="object-position:${pos || "50% 50%"}"></div>` : `<div class="ph">photo coming soon</div>`;
+  const head = o.head !== false, ph = (src, pos) => U(src) ? `<div class="ph"><img alt="" draggable="false" src="${U(src)}" style="object-position:${pos || "50% 50%"}"></div>` : `<div class="ph">photo coming soon</div>`;
   const card = (c, n, extra = "") => `<article class="fam-card reveal" style="--r:${n % 2 ? .8 : -.8}deg">
       <div class="fam-photo" style="--pr:${n % 2 ? -2.5 : 2.5}deg">${ph(c.photo, c.pos)}${extra}</div>
       <div class="fam-num">${c.num}</div><h2 class="fam-title" style="font-size:${c.title.length > 26 ? 36 : 46}px">${esc(c.title)}</h2><p class="fam-text">${esc(c.text)}</p>
@@ -452,7 +486,7 @@ function renderScroll(d, o = {}) {
     ${d.chapters.map((c, n) => card(c, n, stk(c.sticker, n % 2 ? 6 : -4))).join("")}
     <section class="fam-stripsec reveal">
       <div class="fam-num">${d.strip.num}</div><h2 class="fam-title">${esc(d.strip.title)}</h2>
-      <div class="strip${d.strip.variable ? " var" : ""}" id="strip" aria-label="Photo strip, swipe sideways">${d.strip.frames.map(f => `<figure class="frame"${f.ar ? ` style="aspect-ratio:${f.ar}"` : ""}><img alt="" draggable="false"${f.ar ? ' loading="lazy"' : ""} src="${f.src || f}" style="object-position:${f.pos || "50% 50%"}"></figure>`).join("")}</div>
+      <div class="strip${d.strip.variable ? " var" : ""}" id="strip" aria-label="Photo strip, swipe sideways">${d.strip.frames.map(f => `<figure class="frame"${d.strip.variable ? ` style="aspect-ratio:${f.ar || "3 / 4"}"` : ""}><img alt="" draggable="false"${f.ar ? ' loading="lazy"' : ""} src="${U(f.src || f)}" style="object-position:${f.pos || "50% 50%"}"></figure>`).join("")}</div>
       <div class="strip-dots${d.strip.frames.length > 10 ? " count" : ""}" id="stripDots" aria-hidden="true">${d.strip.frames.length > 10 ? `<span>1 / ${d.strip.frames.length}</span>` : d.strip.frames.map(() => "<i></i>").join("")}</div>
       <p class="fam-text">${esc(d.strip.text)}</p>
       <div class="fam-swipe">swipe → </div>
@@ -522,7 +556,7 @@ function pinKey(k) {
 }
 $("pinPad").innerHTML = ["1","2","3","4","5","6","7","8","9","del","0","go"].map(k => `<button class="pin-key${k === "go" ? " go" : ""}" data-k="${k}" aria-label="${k === "del" ? "Delete" : k === "go" ? "Open" : k}">${k === "del" ? "⌫" : k === "go" ? "✓" : k}</button>`).join("");
 $("pinPad").addEventListener("click", e => { const b = e.target.closest("button"); if (b) pinKey(b.dataset.k); });
-addEventListener("keydown", e => { if ($("pinScreen").hidden) return; if (/^[0-9]$/.test(e.key)) pinKey(e.key); else if (e.key === "Backspace") pinKey("del"); else if (e.key === "Enter") pinKey("go"); });
+addEventListener("keydown", e => { if ($("pinScreen").hidden || (e.target.closest && e.target.closest("input,textarea,select,#ed"))) return; if (/^[0-9]$/.test(e.key)) pinKey(e.key); else if (e.key === "Backspace") pinKey("del"); else if (e.key === "Enter") pinKey("go"); });
 
 // ---------- Home: back to the PIN screen (enter the other PIN to switch version) ----------
 function goHome() {
@@ -538,6 +572,261 @@ function goHome() {
   $("homeBtn").hidden = true;
 }
 $("homeBtn").addEventListener("click", goHome);
+
+// =====================================================================
+// Live content + hidden client editor
+// Content lives in Firebase (Firestore). Everyone's phone polls it, so an edit shows up
+// on every open device within ~10 seconds. Setup steps: docs/card-editor-setup.md
+// =====================================================================
+const CLOUD = Object.assign({
+  apiKey: "",        // Firebase web API key (not secret)
+  projectId: "",     // Firebase project id
+  ownerEmail: "",    // the one editor account; its password is the edit PIN
+  pollMs: 10000
+}, window.CLOUD_OVERRIDE || {});
+const cloudOn = !!(CLOUD.apiKey && CLOUD.projectId);
+const FS = CLOUD.base || `https://firestore.googleapis.com/v1/projects/${CLOUD.projectId}/databases/(default)/documents`;
+const AUTH = CLOUD.auth || "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword";
+const clone = o => JSON.parse(JSON.stringify(o));
+const replaceInPlace = (t, s) => { Object.keys(t).forEach(k => delete t[k]); Object.assign(t, s); };
+const snapshot = () => ({ v: 1, mansi: mansiData, family: familyData, scroll: mansiScroll, pins: PINS });
+
+const fsGet = async path => {
+  const r = await fetch(`${FS}/${path}?key=${CLOUD.apiKey}`, { cache: "no-store" });
+  if (r.status === 404) return null;
+  if (!r.ok) throw new Error("get " + r.status);
+  return r.json();
+};
+function refsIn(o, out = new Set()) {
+  if (typeof o === "string") { if (o.startsWith("fb:")) out.add(o.slice(3)); }
+  else if (o && typeof o === "object") Object.values(o).forEach(v => refsIn(v, out));
+  return out;
+}
+async function loadPhotos(ids) {
+  await Promise.all([...ids].filter(id => !photoCache[id]).map(async id => {
+    try { const d = await fsGet("photos/" + id); if (d && d.fields && d.fields.data) photoCache[id] = d.fields.data.stringValue; } catch (e) { /* retried on the next poll */ }
+  }));
+}
+function refreshView() {
+  const keep = page;
+  setMode(mode); page = Math.min(keep, pages.length - 1);
+  if (!$("bookScreen").hidden) show();
+  else if (!$("famScreen").hidden) {
+    const sc = $("famScreen"), y = sc.scrollTop;
+    if (mode === "family") renderScroll(familyData); else renderScroll(mansiScroll, { head: false, book: true });
+    sc.scrollTop = y;
+  }
+}
+let lastStamp = null;
+async function applyContent(c) {
+  const ids = refsIn(c); await loadPhotos(ids);
+  if (c.mansi) replaceInPlace(mansiData, c.mansi);
+  if (c.family) replaceInPlace(familyData, c.family);
+  if (c.scroll) replaceInPlace(mansiScroll, c.scroll);
+  if (c.pins) replaceInPlace(PINS, c.pins);
+  refreshView();
+  return [...ids].every(id => photoCache[id]);
+}
+async function pull() {
+  if (!cloudOn) return;
+  try {
+    const d = await fsGet("site/content");
+    if (!d || !d.fields || !d.fields.json || d.updateTime === lastStamp) return;
+    const stamp = d.updateTime;
+    const complete = await applyContent(JSON.parse(d.fields.json.stringValue));
+    lastStamp = complete ? stamp : null;   // missing photo -> try again next poll
+  } catch (e) { /* offline: keep what is on screen */ }
+}
+pull();
+setInterval(() => { if (!document.hidden) pull(); }, CLOUD.pollMs);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) pull(); });
+
+// ---------- secret entrance: tap the PIN-screen title 7 times ----------
+let titleTaps = [];
+document.querySelector(".pin-title").addEventListener("click", () => {
+  const t = Date.now(); titleTaps = titleTaps.filter(x => t - x < 5000); titleTaps.push(t);
+  if (titleTaps.length >= 7) { titleTaps = []; openLogin(); }
+});
+
+const h = (tag, attrs = {}, ...kids) => {
+  const e = document.createElement(tag);
+  for (const [n, v] of Object.entries(attrs)) {
+    if (n === "class") e.className = v; else if (n.startsWith("on")) e.addEventListener(n.slice(2), v);
+    else if (n === "value") e.value = v; else e.setAttribute(n, v);
+  }
+  kids.flat(Infinity).forEach(c => { if (c != null) e.append(c.nodeType ? c : document.createTextNode(c)); });
+  return e;
+};
+const authErr = m => /INVALID|NOT_FOUND|WRONG/.test(m) ? "Wrong PIN." : /TOO_MANY/.test(m) ? "Too many tries. Wait a few minutes and try again." : "Could not sign in (" + m + ").";
+async function signIn(pin) {
+  const r = await fetch(`${AUTH}?key=${CLOUD.apiKey}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: CLOUD.ownerEmail, password: pin, returnSecureToken: true }) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(authErr((j.error && j.error.message) || String(r.status)));
+  return j.idToken;
+}
+async function fsPut(path, field, value, token) {
+  const r = await fetch(`${FS}/${path}?updateMask.fieldPaths=${field}&key=${CLOUD.apiKey}`, { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: "Bearer " + token }, body: JSON.stringify({ fields: { [field]: { stringValue: value } } }) });
+  if (!r.ok) throw new Error("Save failed (" + r.status + "). Check the Firebase rules and your connection.");
+  return r.json();
+}
+
+function openLogin() {
+  if (document.getElementById("edLogin")) return;
+  const err = h("p", { style: "color:#a32018;min-height:1.3em;margin:8px 0 0" }, "");
+  const pin = h("input", { type: "password", inputmode: "numeric", autocomplete: "off", placeholder: "Edit PIN", "aria-label": "Edit PIN" });
+  const box = h("div", { class: "ed-login", id: "edLogin" }, h("form", { onsubmit: async e => {
+    e.preventDefault();
+    if (!cloudOn) { err.textContent = "The editor is not set up yet (Firebase details are missing)."; return; }
+    err.textContent = "Checking…";
+    try { await signIn(pin.value); box.remove(); openEditor(pin.value); } catch (x) { err.textContent = x.message; pin.value = ""; }
+  } }, h("h3", { style: "margin:0 0 10px" }, "Editor"), pin, err,
+    h("div", { class: "ed-row" }, h("button", { class: "ed-btn pri", type: "submit" }, "Open"), h("button", { class: "ed-btn", type: "button", onclick: () => box.remove() }, "Cancel"))));
+  document.body.append(box); pin.focus();
+}
+
+// ---------- image helpers ----------
+function shrink(file) {
+  return new Promise((ok, bad) => {
+    const url = URL.createObjectURL(file), im = new Image();
+    im.onload = () => {
+      const s = Math.min(1, 1100 / Math.max(im.width, im.height));
+      let w = Math.round(im.width * s), hh = Math.round(im.height * s), q = .82, d; const c = document.createElement("canvas");
+      for (let n = 0; n < 6; n++) { c.width = w; c.height = hh; c.getContext("2d").drawImage(im, 0, 0, w, hh); d = c.toDataURL("image/jpeg", q); if (d.length < 700000) break; q = Math.max(.5, q - .08); w = Math.round(w * .85); hh = Math.round(hh * .85); }
+      URL.revokeObjectURL(url); ok({ d, w, h: hh });
+    };
+    im.onerror = () => bad(new Error("That file is not a photo.")); im.src = url;
+  });
+}
+function pickImages(multiple) {
+  return new Promise(res => {
+    const i = document.createElement("input"); i.type = "file"; i.accept = "image/*"; i.multiple = !!multiple;
+    i.onchange = async () => { const out = []; for (const f of i.files) { try { out.push(await shrink(f)); } catch (e) { /* skip */ } } res(out); };
+    i.click();
+  });
+}
+
+// ---------- the editor ----------
+function openEditor(pin) {
+  const draft = clone(snapshot()), pending = new Set();
+  [draft.scroll, draft.family].forEach(d => { d.strip.frames = d.strip.frames.map(f => typeof f === "string" ? { src: f } : f); });
+  const ui = { tab: "mansi", pins: { mansi: Object.keys(draft.pins).find(k => draft.pins[k] === "mansi") || "", family: Object.keys(draft.pins).find(k => draft.pins[k] === "family") || "" } };
+  const savedMark = () => JSON.stringify([draft, ui.pins]);
+  let mark = savedMark();
+  const root = h("div", { id: "ed" });
+  document.body.append(root);
+  const toast = (t, ok) => { let m = root.querySelector(".ed-msg"); if (!m) { m = h("div", { class: "ed-msg" }); root.append(m); } m.textContent = t; m.style.background = ok ? "#1f6b43" : "#222"; clearTimeout(toast.t); if (ok) toast.t = setTimeout(() => m.remove(), 4500); };
+  const newPhoto = d => { const id = "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); photoCache[id] = d; pending.add(id); return "fb:" + id; };
+  const btn = (label, fn, cls = "") => h("button", { class: "ed-btn sm " + cls, type: "button", onclick: fn }, label);
+
+  const fText = (label, o, k, area) => h("div", {}, h("label", {}, label), h(area ? "textarea" : "input", { type: "text", value: o[k] == null ? "" : o[k], oninput: e => { o[k] = e.target.value; } }));
+  const fLines = (label, arr) => h("div", {}, h("label", {}, label), arr.map((_, i) => h("input", { type: "text", style: "margin-bottom:6px", value: arr[i], oninput: e => { arr[i] = e.target.value; } })));
+  const fSel = (label, o, k, opts) => h("div", {}, h("label", {}, label), h("select", { onchange: e => { o[k] = e.target.value; } }, opts.map(v => h("option", o[k] === v ? { value: v, selected: "" } : { value: v }, v))));
+  const blank = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+  async function rotated(src) {
+    const im = new Image(); await new Promise((r, j) => { im.onload = r; im.onerror = j; im.src = src; });
+    const c = document.createElement("canvas"); c.width = im.naturalHeight; c.height = im.naturalWidth;
+    const x = c.getContext("2d"); x.translate(c.width, 0); x.rotate(Math.PI / 2); x.drawImage(im, 0, 0);
+    return { d: c.toDataURL("image/jpeg", .85), w: c.width, h: c.height };
+  }
+  function fPhoto(label, o, k = "photo", cfg = {}) {
+    const img = h("img", { alt: "" }), sync = () => { img.src = U(o[k]) || blank; }; sync();
+    const set = (v, w, hh) => { o[k] = v; if (w) o.ar = w + " / " + hh; sync(); };
+    const focus = (txt, y) => btn(txt, () => { o.pos = "50% " + y + "%"; toast("Focus set to " + txt.toLowerCase() + "."); });
+    return h("div", {}, h("label", {}, label), h("div", { class: "ed-photo" }, img, h("div", {},
+      h("div", { class: "ed-row", style: "margin-top:0" },
+        btn("Change photo", async () => { const [p] = await pickImages(false); if (p) set(newPhoto(p.d), p.w, p.h); }),
+        btn("Rotate ⟳", async () => { if (!U(o[k])) return; try { const r = await rotated(U(o[k])); set(newPhoto(r.d), r.w, r.h); } catch (e) { toast("Could not rotate that photo."); } }),
+        o[k] ? btn("Remove", () => set("")) : null),
+      cfg.focus === false ? null : h("div", { class: "ed-row" }, h("span", { style: "font-size:13px;color:#6b5a58;align-self:center" }, "Keep in view:"), focus("Top", 20), focus("Middle", 45), focus("Bottom", 75)))));
+  }
+  const move = (arr, i, d, redraw) => { const j = i + d; if (j < 0 || j >= arr.length) return; [arr[i], arr[j]] = [arr[j], arr[i]]; redraw(); };
+  function fList(label, arr, fields, make) {
+    const box = h("div"), draw = () => {
+      box.replaceChildren(...arr.map((it, i) => h("div", { class: "ed-card" },
+        h("div", { class: "ed-row", style: "margin:0 0 6px" }, h("b", { style: "flex:1" }, label + " " + (i + 1)), btn("↑", () => move(arr, i, -1, draw)), btn("↓", () => move(arr, i, 1, draw)), btn("Delete", () => { if (confirm("Delete this " + label.toLowerCase() + "?")) { arr.splice(i, 1); draw(); } }, "danger")),
+        fields(it))), h("button", { class: "ed-btn", type: "button", onclick: () => { arr.push(make()); draw(); } }, "+ Add " + label.toLowerCase()));
+    };
+    draw(); return box;
+  }
+  const stickers = ["heart", "stars", "cupcake", "favorite", "envelope"];
+  const chapterFields = c => [fText("Small heading", c, "num"), fText("Title", c, "title"), fText("Message", c, "text", true), fPhoto("Photo", c), fSel("Sticker", c, "sticker", stickers), fText("Handwritten caption under photo (optional)", c, "caption")];
+  const newChapter = () => ({ num: "Chapter", title: "", text: "", photo: "", pos: "50% 45%", sticker: "heart" });
+  const card = (title, ...kids) => h("div", { class: "ed-card" }, h("h3", {}, title), kids);
+
+  function framesEditor(strip) {
+    const box = h("div"), draw = () => {
+      box.replaceChildren(
+        h("div", { class: "ed-thumbs" }, strip.frames.map((f, i) => h("div", { class: "ed-thumb" }, h("img", { alt: "", src: U(f.src) || blank }), h("div", { class: "ed-row", style: "justify-content:center;margin-top:6px" },
+          btn("←", () => move(strip.frames, i, -1, draw)), btn("→", () => move(strip.frames, i, 1, draw)),
+          btn("⟳", async () => { try { const r = await rotated(U(f.src)); f.src = newPhoto(r.d); f.ar = r.w + " / " + r.h; draw(); } catch (e) { toast("Could not rotate that photo."); } }),
+          btn("✕", () => { strip.frames.splice(i, 1); draw(); }, "danger"))))),
+        h("div", { class: "ed-row" }, h("button", { class: "ed-btn pri", type: "button", onclick: async () => { const ps = await pickImages(true); ps.forEach(p => strip.frames.push({ src: newPhoto(p.d), ar: p.w + " / " + p.h })); draw(); } }, "+ Add photos")));
+    };
+    draw(); return box;
+  }
+  const stripCard = strip => card("Swipe strip (photos you swipe sideways)", fText("Small heading", strip, "num"), fText("Title", strip, "title"), fText("Text under the strip", strip, "text", true),
+    h("label", { style: "display:flex;gap:8px;align-items:center;font-size:14px;color:#2a1d1d" }, h("input", Object.assign({ type: "checkbox", onchange: e => { strip.variable = e.target.checked; } }, strip.variable ? { checked: "" } : {})), "Keep each photo's own shape (wide photos stay wide)"),
+    framesEditor(strip));
+  const soloCard = solo => card("Last card (one photo, big message)", chapterFields(Object.assign(solo, { sticker: solo.sticker || "heart" })).slice(0, 4));
+
+  const sections = () => {
+    if (ui.tab === "mansi") {
+      const m = draft.mansi, s = draft.scroll;
+      return [
+        card("Cover page", fText("Age number", m, "age"), fLines("Greeting (4 lines)", m.cover.greeting), fText("Caption under the photo", m.cover, "caption"), fPhoto("Cover photo", m.cover)),
+        h("h2", {}, "Page-flip book"), fList("Chapter", m.chapters, chapterFields, newChapter),
+        h("h2", {}, "Scroll section (after the book)"), fList("Photo card", s.chapters, chapterFields, newChapter), stripCard(s.strip), soloCard(s.solo),
+        card("Sign-off at the very end", fText("Text", s.end, "caption"))
+      ];
+    }
+    if (ui.tab === "family") {
+      const f = draft.family;
+      return [
+        card("Front page", fText("Age number", f, "age"), fLines("Greeting (4 lines)", f.cover.greeting), fPhoto("Front-page photo", f.cover)),
+        h("h2", {}, "Photo cards"), fList("Photo card", f.chapters, chapterFields, newChapter), stripCard(f.strip), soloCard(f.solo),
+        card("Sign-off at the very end", fText("Text", f.cover, "caption"))
+      ];
+    }
+    const np = h("input", { type: "password", inputmode: "numeric", placeholder: "New edit PIN (6 or more digits)", autocomplete: "off" });
+    return [
+      card("Opening PINs", h("p", { style: "margin:0;color:#6b5a58;font-size:14px" }, "The PINs people type to open each version. 3 to 6 digits; they must be different and one must not start with the other."),
+        fText("Mansi's PIN", ui.pins, "mansi"), fText("Family PIN", ui.pins, "family")),
+      card("Edit PIN (this editor)", h("p", { style: "margin:0;color:#6b5a58;font-size:14px" }, "Changes the PIN used to open this editor. Takes effect immediately."), np,
+        h("div", { class: "ed-row" }, btn("Change edit PIN", async () => {
+          if (!/^\d{6,}$/.test(np.value)) { toast("The edit PIN needs at least 6 digits."); return; }
+          try {
+            const token = await signIn(pin);
+            const r = await fetch(AUTH.replace("signInWithPassword", "update") + "?key=" + CLOUD.apiKey, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ idToken: token, password: np.value, returnSecureToken: false }) });
+            if (!r.ok) throw new Error("Could not change the PIN (" + r.status + ").");
+            pin = np.value; np.value = ""; toast("Edit PIN changed.", true);
+          } catch (e) { toast(e.message); }
+        })))
+    ];
+  };
+  function draw() {
+    const body = h("div", { class: "ed-body" }, sections());
+    root.replaceChildren(
+      h("div", { class: "ed-top" }, h("b", {}, "Edit website"), h("button", { class: "ed-btn", type: "button", onclick: () => { if (savedMark() !== mark && !confirm("Discard changes you have not saved?")) return; root.remove(); } }, "Close"), h("button", { class: "ed-btn pri", id: "edSave", type: "button", onclick: save }, "Save")),
+      h("div", { class: "ed-tabs" }, [["mansi", "Mansi's version"], ["family", "Family version"], ["settings", "PINs"]].map(([k, t]) => h("button", { class: "ed-tab" + (ui.tab === k ? " on" : ""), type: "button", onclick: () => { ui.tab = k; draw(); root.scrollTop = 0; } }, t))),
+      body);
+  }
+  async function save() {
+    const pm = String(ui.pins.mansi).trim(), pf = String(ui.pins.family).trim();
+    if (!/^\d{3,6}$/.test(pm) || !/^\d{3,6}$/.test(pf)) { toast("Opening PINs must be 3 to 6 digits."); return; }
+    if (pm === pf || pm.startsWith(pf) || pf.startsWith(pm)) { toast("The two opening PINs must be different, and neither may start with the other."); return; }
+    const body = { v: 1, mansi: draft.mansi, family: draft.family, scroll: draft.scroll, pins: { [pm]: "mansi", [pf]: "family" } };
+    const sv = document.getElementById("edSave"); sv.disabled = true; toast("Saving…");
+    try {
+      const token = await signIn(pin), used = refsIn(body);
+      for (const id of [...pending].filter(i => used.has(i))) { await fsPut("photos/" + id, "data", photoCache[id], token); pending.delete(id); }
+      const r = await fsPut("site/content", "json", JSON.stringify(body), token);
+      lastStamp = r.updateTime; await applyContent(clone(body)); mark = savedMark();
+      toast("Saved. It will show on every device within about 10 seconds.", true);
+    } catch (e) { toast(e.message); } finally { sv.disabled = false; }
+  }
+  draw();
+}
+
 drawPin(); enter($("pinScreen"));
 </script>
 </body></html>
