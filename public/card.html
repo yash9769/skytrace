@@ -183,8 +183,12 @@ html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692
 .fam { width: min(100%, 440px); margin: 0 auto; box-sizing: border-box; padding: max(28px, env(safe-area-inset-top, 0px)) 18px max(48px, env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: center; gap: 34px; }
 .fam-head { min-height: calc(100dvh - 60px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
 .fam-tag { margin: 0; font-size: 18px; letter-spacing: .14em; text-transform: uppercase; opacity: .8; }
-.fam-age { position: relative; font-family: var(--display); font-size: 150px; line-height: .95; color: var(--cream); }
-.fam-age img { position: absolute; right: -44px; bottom: 8px; width: 74px; }
+.fam-hero { position: relative; width: min(78%, 300px); background: #fff; padding: 10px 10px 34px; box-shadow: 0 10px 26px rgba(6,10,24,.45); transform: rotate(-2.5deg); margin-bottom: 14px; }
+.fam-hero .ph { aspect-ratio: 4 / 4.4; background: #e9dfd3; overflow: hidden; display: grid; place-items: center; color: #a88; }
+.fam-hero .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fam-hero .stk { position: absolute; right: -9% !important; bottom: -7% !important; width: 34% !important; }
+.fam-age { position: relative; font-family: var(--display); font-size: 112px; line-height: .95; color: var(--cream); }
+.fam-age img { position: absolute; right: -38px; bottom: 6px; width: 60px; }
 .fam-greet { font-size: 23px; line-height: 1.35; }
 .fam-scroll { margin-top: 26px; font-size: 19px; opacity: .8; animation: cta 1.8s ease-in-out infinite; }
 .fam-card { width: 100%; box-sizing: border-box; background: var(--cream) url(birthday/619b416958c9800a9515015a949fd6bb.png) center / cover; color: var(--ink); border-radius: 6px; padding: 20px 20px 26px; box-shadow: 0 14px 30px rgba(6,10,24,.4); text-align: center; transform: rotate(var(--r, 0deg)); }
@@ -264,7 +268,7 @@ const mansiData = {
 // (put files in book/photos/ and set `photo`). Empty `photo` shows a placeholder.
 const familyData = {
   age: "20",
-  cover: { greeting: ["Happy Birthday Mansi!", "Twenty years of laughter,", "love and so many memories.", "From all of us, with love ♡"], photo: "", pos: "50% 50%", caption: "With love, your family" },
+  cover: { greeting: ["Happy Birthday Mansi!", "Twenty years of laughter,", "love and so many memories.", "From all of us, with love ♡"], photo: "book/photos/family-cover.jpg", pos: "50% 30%", caption: "With love, your family" },
   chapters: [
     { num:"Chapter 01", title:"Little Mansi", text:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", photo:"", sticker:"stars" },
     { num:"Chapter 02", title:"Growing up", text:"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", photo:"", sticker:"cupcake" },
@@ -366,6 +370,7 @@ function renderFamily() {
   $("fam").innerHTML = `
     <header class="fam-head">
       <p class="fam-tag">★ from your family ★</p>
+      <div class="fam-hero">${ph(d.cover.photo, d.cover.pos)}${stk("stars", 4)}</div>
       <div class="fam-age">${d.age}<img alt="" src="book/cupcake.png" draggable="false"></div>
       <div class="fam-greet">${d.cover.greeting.map(l => `<div>${esc(l)}</div>`).join("")}</div>
       <div class="fam-scroll">scroll down ↓</div>
