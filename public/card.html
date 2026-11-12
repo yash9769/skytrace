@@ -175,6 +175,10 @@ html.family #ambient img { --o: .22; }
   .screen.enter, #bookScreen.enter .bk-book, .stage, .cta, .pin-dots i.on, .bk-shade { animation: none; }
   #ambient, .burst { display: none; }
 }
+.home-btn { position: fixed; z-index: 20; top: calc(env(safe-area-inset-top, 0px) + 10px); left: 12px; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(251,247,239,.16); color: #fff; font: inherit; font-size: 19px; cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); box-shadow: inset 0 0 0 1px rgba(251,247,239,.22); touch-action: manipulation; transition: background .15s, transform .15s; }
+.home-btn:active { background: rgba(251,247,239,.32); transform: scale(.95); }
+.home-btn:focus-visible { outline: 2px dashed #fff; outline-offset: 3px; }
+.home-btn[hidden] { display: none; }
 html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692)); }
 
 /* ---------- Family edition: one scrolling page instead of the flip-book ---------- */
@@ -206,9 +210,28 @@ html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692
 .reveal { opacity: 0; translate: 0 26px; transition: opacity .7s ease, translate .7s cubic-bezier(.2,.8,.2,1); }
 .reveal.in { opacity: 1; translate: 0 0; }
 @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; translate: none; transition: none; } .fam-scroll { animation: none; } }
+
+/* family film strip: horizontal swipe */
+.fam-stripsec { width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.strip { display: flex; gap: 12px; width: calc(100% + 36px); margin: 6px -18px 0; padding: 26px 18px; box-sizing: border-box; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; touch-action: pan-x pan-y; overscroll-behavior-x: contain; scrollbar-width: none; background:
+  repeating-linear-gradient(90deg, rgba(255,255,255,.88) 0 12px, transparent 12px 28px) 8px 7px / 100% 8px no-repeat,
+  repeating-linear-gradient(90deg, rgba(255,255,255,.88) 0 12px, transparent 12px 28px) 8px calc(100% - 15px) / 100% 8px no-repeat, #1a1210; }
+.strip::-webkit-scrollbar { display: none; }
+.frame { flex: 0 0 66%; max-width: 270px; margin: 0; scroll-snap-align: center; aspect-ratio: 3 / 4; background: #3a2b27; border-radius: 3px; overflow: hidden; box-shadow: 0 0 0 3px #2a1d19; }
+.frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.strip-dots { display: flex; gap: 8px; margin: 14px 0 12px; }
+.strip-dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.35); transition: background .3s, width .3s; }
+.strip-dots i.on { background: #fff; width: 20px; border-radius: 4px; }
+.fam-stripsec .fam-text { color: #fff; max-width: 340px; }
+.fam-stripsec .fam-title { color: #fff; }
+.fam-stripsec .fam-num { color: #fff; }
+.fam-swipe { margin-top: 10px; font-size: 18px; opacity: .75; animation: cta 1.8s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .fam-swipe { animation: none; } }
 </style>
 </head><body>
 <div id="ambient" aria-hidden="true"></div>
+<button class="home-btn" id="homeBtn" hidden aria-label="Back to the PIN screen">⌂ home</button>
+
 <div class="screen" id="pinScreen">
   <div class="pin-card">
     <div class="pin-title">Happy Birthday</div>
@@ -264,17 +287,20 @@ const mansiData = {
   ]
 };
 
-// Family version: same book, different content. Edit the text and add photos
-// (put files in book/photos/ and set `photo`). Empty `photo` shows a placeholder.
+// Family version: one scrolling page. Edit text here; photos live in book/photos/.
+//  front page (photo 1) -> chapters (photos 2-5) -> horizontal film strip -> solo photo.
 const familyData = {
   age: "20",
   cover: { greeting: ["Happy Birthday Mansi!", "Twenty years of laughter,", "love and so many memories.", "From all of us, with love ♡"], photo: "book/photos/family-cover.jpg", pos: "50% 30%", caption: "With love, your family" },
   chapters: [
-    { num:"Chapter 01", title:"Little Mansi", text:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", photo:"", sticker:"stars" },
-    { num:"Chapter 02", title:"Growing up", text:"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", photo:"", sticker:"cupcake" },
-    { num:"Chapter 03", title:"Family moments", text:"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.", photo:"", sticker:"stars" },
-    { num:"Chapter 04", title:"Wishes for you", text:"Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", photo:"", sticker:"envelope" }
-  ]
+    { num:"Chapter 01", title:"Pure fun", text:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", photo:"book/photos/fam-2-booth.jpg", pos:"50% 42%", sticker:"stars" },
+    { num:"Chapter 02", title:"Selfie time", text:"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", photo:"book/photos/fam-3-selfie.jpg", pos:"50% 28%", sticker:"cupcake" },
+    { num:"Chapter 03", title:"Festive vibes", text:"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.", photo:"book/photos/fam-4-tree.jpg", pos:"50% 55%", sticker:"stars" },
+    { num:"Chapter 04", title:"Cake and cuddles", text:"Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", photo:"book/photos/fam-5-cake.jpg", pos:"50% 56%", sticker:"envelope" }
+  ],
+  strip: { num:"Swipe through", title:"More moments", text:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.",
+    frames: ["book/photos/fam-6-temple.jpg", "book/photos/fam-2-booth.jpg", "book/photos/fam-3-selfie.jpg", "book/photos/fam-4-tree.jpg", "book/photos/fam-5-cake.jpg"] },
+  solo: { num:"The last one", title:"Just you", text:"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Happy Birthday! ♡", photo:"book/photos/fam-solo.jpg", pos:"50% 30%" }
 };
 let data = mansiData;
 let pages = [{ cover: true }, ...data.chapters.map((c, n) => ({ n }))];
@@ -367,6 +393,10 @@ document.addEventListener("dblclick", e => e.preventDefault());
 // ---------- Family edition: scrolling page ----------
 function renderFamily() {
   const d = familyData, ph = (src, pos) => src ? `<div class="ph"><img alt="" draggable="false" src="${src}" style="object-position:${pos || "50% 50%"}"></div>` : `<div class="ph">photo coming soon</div>`;
+  const card = (c, n, extra = "") => `<article class="fam-card reveal" style="--r:${n % 2 ? .8 : -.8}deg">
+      <div class="fam-photo" style="--pr:${n % 2 ? -2.5 : 2.5}deg">${ph(c.photo, c.pos)}${extra}</div>
+      <div class="fam-num">${c.num}</div><h2 class="fam-title">${esc(c.title)}</h2><p class="fam-text">${esc(c.text)}</p>
+    </article>`;
   $("fam").innerHTML = `
     <header class="fam-head">
       <p class="fam-tag">★ from your family ★</p>
@@ -375,20 +405,28 @@ function renderFamily() {
       <div class="fam-greet">${d.cover.greeting.map(l => `<div>${esc(l)}</div>`).join("")}</div>
       <div class="fam-scroll">scroll down ↓</div>
     </header>
-    ${d.chapters.map((c, n) => `<article class="fam-card reveal" style="--r:${n % 2 ? .8 : -.8}deg">
-      <div class="fam-photo" style="--pr:${n % 2 ? -2.5 : 2.5}deg">${ph(c.photo, c.pos)}${stk(c.sticker, n % 2 ? 6 : -4)}</div>
-      <div class="fam-num">${c.num}</div><h2 class="fam-title">${esc(c.title)}</h2><p class="fam-text">${esc(c.text)}</p>
-    </article>`).join("")}
+    ${d.chapters.map((c, n) => card(c, n, stk(c.sticker, n % 2 ? 6 : -4))).join("")}
+    <section class="fam-stripsec reveal">
+      <div class="fam-num">${d.strip.num}</div><h2 class="fam-title">${esc(d.strip.title)}</h2>
+      <div class="strip" id="strip" aria-label="Photo strip, swipe sideways">${d.strip.frames.map(f => `<figure class="frame"><img alt="" draggable="false" src="${f}"></figure>`).join("")}</div>
+      <div class="strip-dots" id="stripDots" aria-hidden="true">${d.strip.frames.map(() => "<i></i>").join("")}</div>
+      <p class="fam-text">${esc(d.strip.text)}</p>
+      <div class="fam-swipe">swipe → </div>
+    </section>
+    ${card(d.solo, d.chapters.length + 1)}
     <footer class="fam-end reveal" id="famEnd"><div class="fam-sign">${esc(d.cover.caption)}</div><button class="bk-again" id="famTop">↑ back to the top</button></footer>`;
   const sc = $("famScreen"); sc.scrollTop = 0;
   $("famTop").onclick = () => sc.scrollTo({ top: 0, behavior: "smooth" });
+  const strip = $("strip"), dotEls = [...$("stripDots").children];
+  const setDot = () => { const f = strip.firstElementChild, step = f.getBoundingClientRect().width + 12; const i = Math.min(dotEls.length - 1, Math.round(strip.scrollLeft / step)); dotEls.forEach((e, k) => e.classList.toggle("on", k === i)); };
+  strip.addEventListener("scroll", setDot, { passive: true }); setDot();
   let done = false;
   if (!("IntersectionObserver" in window)) { sc.querySelectorAll(".reveal").forEach(e => e.classList.add("in")); return; }
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (!e.isIntersecting) return;
     e.target.classList.add("in"); io.unobserve(e.target);
     if (e.target.id === "famEnd" && !done) { done = true; burst(); buzz([12, 60, 12]); }
-  }), { root: sc, threshold: .18 });
+  }), { root: sc, threshold: .15 });
   sc.querySelectorAll(".reveal").forEach(e => io.observe(e));
 }
 
@@ -417,7 +455,7 @@ function unlock(mode) {
   unlocking = true; setMode(mode); preload(data); buzz([10, 50, 18]);
   pinCard.classList.add("ok"); pinMsg.textContent = mode === "family" ? "welcome ♡" : "welcome, birthday girl ♡";
   setTimeout(() => { $("pinScreen").classList.add("fade"); }, 650);
-  setTimeout(() => { $("pinScreen").hidden = true; $("cover").hidden = false; fit(); enter($("cover")); }, 1150);
+  setTimeout(() => { $("pinScreen").hidden = true; $("cover").hidden = false; $("homeBtn").hidden = false; fit(); enter($("cover")); }, 1150);
 }
 function pinKey(k) {
   if (unlocking) return;
@@ -435,6 +473,21 @@ function pinKey(k) {
 $("pinPad").innerHTML = ["1","2","3","4","5","6","7","8","9","del","0","go"].map(k => `<button class="pin-key${k === "go" ? " go" : ""}" data-k="${k}" aria-label="${k === "del" ? "Delete" : k === "go" ? "Open" : k}">${k === "del" ? "⌫" : k === "go" ? "✓" : k}</button>`).join("");
 $("pinPad").addEventListener("click", e => { const b = e.target.closest("button"); if (b) pinKey(b.dataset.k); });
 addEventListener("keydown", e => { if ($("pinScreen").hidden) return; if (/^[0-9]$/.test(e.key)) pinKey(e.key); else if (e.key === "Backspace") pinKey("del"); else if (e.key === "Enter") pinKey("go"); });
+
+// ---------- Home: back to the PIN screen (enter the other PIN to switch version) ----------
+function goHome() {
+  buzz(8);
+  document.querySelectorAll(".burst").forEach(e => e.remove());
+  ["cover", "bookScreen", "famScreen"].forEach(id => { $(id).hidden = true; $(id).classList.remove("fade", "enter"); });
+  stage.classList.remove("opened"); $("card").classList.remove("open");
+  $("famScreen").scrollTop = 0; busy = false; page = 0;
+  setMode("mansi");
+  entry = ""; unlocking = false; drawPin();
+  pinCard.classList.remove("ok", "shake"); pinMsg.innerHTML = "&nbsp;";
+  $("pinScreen").classList.remove("fade"); $("pinScreen").hidden = false; enter($("pinScreen"));
+  $("homeBtn").hidden = true;
+}
+$("homeBtn").addEventListener("click", goHome);
 drawPin(); enter($("pinScreen"));
 </script>
 </body></html>
