@@ -204,7 +204,7 @@ html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692
 .fam-photo .stk[src*="cupcake"], .fam-photo .stk[src*="stars"] { right: -3% !important; }
 .fam-num { font-size: 17px; letter-spacing: .18em; text-transform: uppercase; opacity: .75; }
 .fam-title { font-family: var(--script); font-size: 46px; line-height: 1.15; margin: 2px 0 8px; }
-.fam-text { margin: 0; font-size: 21px; line-height: 1.4; }
+.fam-text { white-space: pre-line; margin: 0; font-size: 21px; line-height: 1.4; }
 .fam-end { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 20px 0 10px; text-align: center; }
 .fam-sign { font-family: var(--script); font-size: 50px; line-height: 1.1; }
 .reveal { opacity: 0; translate: 0 26px; transition: opacity .7s ease, translate .7s cubic-bezier(.2,.8,.2,1); }
@@ -309,12 +309,12 @@ const familyData = {
 // Mansi's scroll section, shown after the flip-book ("keep going"): 2 photo cards -> swipe strip -> solo.
 const mansiScroll = {
   chapters: [
-    { num:"Chapter 08", title:"Sunny days", text:"Every day with you turns into a story worth keeping.", photo:"book/photos/ch2-balcony.jpg", pos:"50% 62%", sticker:"heart" },
-    { num:"Chapter 09", title:"Mirror moments", text:"Some moments don't need words, just us.", photo:"book/photos/ch6-mirror.jpg", pos:"40% 50%", sticker:"stars" }
+    { num:"Chapter 08", title:"Mansi, I love you for you.", text:"Not because you do everything right. I love your smile, your laughter, your madness, your stubbornness, even the little things that drive me crazy. 😂❤️\n\nI'm proud of who you are: how much you care, and how you keep going when things aren't easy.", photo:"book/photos/ms-lake.jpg", pos:"66% 40%", sticker:"heart" },
+    { num:"Chapter 09", title:"You never have to be strong all the time.", text:"You deserve to be pampered, listened to and loved.\n\nI don't need fancy dates. Travelling together, sitting beside you and laughing at silly things is enough. I'll always want to see you grow and win, and I don't want either of us to lose ourselves along the way.", photo:"book/photos/ms-selfie.jpg", pos:"50% 60%", sticker:"stars" }
   ],
   strip: { num:"Swipe through", title:"More moments", text:"More conversations, more laughter, more adventures, more stories.",
     frames: [{ src:"book/photos/ch1-thane.jpg", pos:"50% 38%" }, "book/photos/ch3-surprise.jpg", "book/photos/ch4-train.jpg", "book/photos/ch5-hands.jpg", "book/photos/cover-walk.jpg"] },
-  solo: { num:"The last one", title:"Just you", text:"I'm genuinely happy you're part of my story. I love you, Mansi ❤️", photo:"book/photos/cover-laugh.jpg", pos:"50% 35%" },
+  solo: { num:"The last one", title:"I'm genuinely happy you're part of my story.", text:"I don't know what every chapter will look like, but I want to keep collecting these little moments with you.\n\nI love you, Mansi. ❤️", photo:"book/photos/ms-path.jpg", pos:"50% 42%" },
   end: { caption: "I love you ♡" }
 };
 let data = mansiData;
@@ -416,7 +416,7 @@ function renderScroll(d, o = {}) {
   const head = o.head !== false, ph = (src, pos) => src ? `<div class="ph"><img alt="" draggable="false" src="${src}" style="object-position:${pos || "50% 50%"}"></div>` : `<div class="ph">photo coming soon</div>`;
   const card = (c, n, extra = "") => `<article class="fam-card reveal" style="--r:${n % 2 ? .8 : -.8}deg">
       <div class="fam-photo" style="--pr:${n % 2 ? -2.5 : 2.5}deg">${ph(c.photo, c.pos)}${extra}</div>
-      <div class="fam-num">${c.num}</div><h2 class="fam-title">${esc(c.title)}</h2><p class="fam-text">${esc(c.text)}</p>
+      <div class="fam-num">${c.num}</div><h2 class="fam-title" style="font-size:${c.title.length > 26 ? 36 : 46}px">${esc(c.title)}</h2><p class="fam-text">${esc(c.text)}</p>
     </article>`;
   $("fam").innerHTML = `
     ${head ? `<header class="fam-head">
