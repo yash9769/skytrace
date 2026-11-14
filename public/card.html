@@ -658,7 +658,7 @@ sYes.addEventListener("click", () => {
 const amb = $("amb"), ambBtn = $("ambBtn"), AMB_VOL = 1;   // the song file itself is already mixed quiet (iPhones ignore page volume), so the page plays it at full file level
 let ambReady = false, ambActive = false, ambOn = true, ambFade = null;
 amb.volume = 0;
-const ambFadeTo = (v, done) => { clearInterval(ambFade); ambFade = setInterval(() => { const d = v - amb.volume; if (Math.abs(d) < .02) { amb.volume = v; clearInterval(ambFade); if (done) done(); } else amb.volume = Math.max(0, Math.min(1, amb.volume + Math.sign(d) * .02)); }, 60); };
+const ambFadeTo = (v, done) => { clearInterval(ambFade); ambFade = setInterval(() => { const d = v - amb.volume; if (Math.abs(d) < .06) { amb.volume = v; clearInterval(ambFade); if (done) done(); } else amb.volume = Math.max(0, Math.min(1, amb.volume + Math.sign(d) * .06)); }, 60); };
 function ambSync() {
   ambBtn.hidden = !(ambActive && (ambReady || amb.readyState >= 2));
   ambBtn.textContent = ambOn ? "🔊" : "🔇"; ambBtn.classList.toggle("off", !ambOn);
