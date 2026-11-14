@@ -233,6 +233,15 @@ html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692
 .fam.nohead { padding-top: 74px; }
 .fam-btns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 .bk-hint .bk-again + .bk-again { margin-left: 10px; }
+
+/* voice note */
+.vn { display: flex; align-items: center; gap: 12px; margin: 10px 4px 4px; }
+.vn-btn { flex: none; width: 56px; height: 56px; border-radius: 50%; border: 0; background: var(--ink); color: #fff; font-size: 22px; line-height: 1; cursor: pointer; box-shadow: 0 4px 12px rgba(60,20,20,.35); touch-action: manipulation; display: grid; place-items: center; padding: 0; }
+.vn-btn:active { transform: scale(.93); }
+.vn-btn:focus-visible { outline: 2px dashed var(--ink); outline-offset: 3px; }
+.vn-track { flex: 1; height: 30px; padding: 10px 0; border-radius: 5px; background: rgba(120,35,38,.2); background-clip: content-box; overflow: hidden; cursor: pointer; touch-action: manipulation; }
+.vn-bar { height: 100%; width: 0; background: var(--ink); border-radius: 5px; }
+.vn-time { flex: none; min-width: 74px; text-align: right; font-size: 18px; }
 </style>
 </head><body>
 <div id="ambient" aria-hidden="true"></div>
@@ -312,8 +321,8 @@ const familyData = {
 // Mansi's scroll section, shown after the flip-book ("keep going"): 2 photo cards -> swipe strip -> solo.
 const mansiScroll = {
   chapters: [
-    { num:"Chapter 08", title:"Mansi, I love you for you.", text:"Not because you do everything right. I love your smile, your laughter, your madness, your stubbornness, even the little things that drive me crazy. 😂❤️\n\nI'm proud of who you are: how much you care, and how you keep going when things aren't easy.", photo:"book/photos/ms-lake.jpg", pos:"66% 40%", sticker:"heart" },
-    { num:"Chapter 09", title:"You never have to be strong all the time.", text:"You deserve to be pampered, listened to and loved.\n\nI don't need fancy dates. Travelling together, sitting beside you and laughing at silly things is enough. I'll always want to see you grow and win, and I don't want either of us to lose ourselves along the way.", photo:"book/photos/ms-selfie.jpg", pos:"50% 60%", sticker:"stars" }
+    { num:"Chapter 08", title:"Mansi, I love you for you.", text:"Not because you do everything right. I love your smile, your laughter, your madness, your stubbornness, even the little things that drive me crazy. 😂❤️\n\nI'm proud of who you are: how much you care, and how you keep going when things aren't easy.", photo:"book/photos/ms-lake.jpg", ar:"1100 / 619", pos:"66% 40%", sticker:"heart" },
+    { num:"Chapter 09", title:"You never have to be strong all the time.", text:"You deserve to be pampered, listened to and loved.\n\nI don't need fancy dates. Travelling together, sitting beside you and laughing at silly things is enough. I'll always want to see you grow and win, and I don't want either of us to lose ourselves along the way.", photo:"book/photos/ms-selfie.jpg", ar:"787 / 1400", pos:"50% 50%", sticker:"stars" }
   ],
   strip: { num:"Swipe through", title:"More moments", text:"More conversations, more laughter, more adventures, more stories.", variable: true,
     frames: [
@@ -337,7 +346,10 @@ const mansiScroll = {
       { src:"book/photos/strip-18.jpg", ar:"562 / 1000" },
       { src:"book/photos/strip-19.jpg", ar:"1000 / 563" }
     ] },
-  solo: { num:"The last one", title:"I'm genuinely happy you're part of my story.", text:"I don't know what every chapter will look like, but I want to keep collecting these little moments with you.\n\nI love you, Mansi. ❤️", photo:"book/photos/ms-path.jpg", pos:"50% 42%" },
+  // photo-only card shown between the strip and the closing card
+  extra: [ { photo:"book/photos/ms-path.jpg", ar:"787 / 1400", pos:"50% 45%", sticker:"heart" } ],
+  audio: { src:"book/audio/note.m4a", num:"One more thing", title:"A voice note for you" },
+  solo: { num:"The last one", title:"I'm genuinely happy you're part of my story.", text:"I don't know what every chapter will look like, but I want to keep collecting these little moments with you.\n\nI love you, Mansi. ❤️", photo:"book/photos/ms-udaipur.jpg", ar:"1100 / 1467", pos:"50% 40%" },
   end: { caption: "Love you forever ♡" }
 };
 let data = mansiData;
@@ -404,7 +416,8 @@ hint.addEventListener("click", e => {
   if (e.target.closest("#again")) { page = 0; show(); enter($("bookScreen")); }
   else if (e.target.closest("#goOn")) { buzz(8); $("bookScreen").hidden = true; $("famScreen").hidden = false; renderScroll(mansiScroll, { head: false, book: true }); enter($("famScreen")); }
 });
-function backToBook() { $("famScreen").hidden = true; $("bookScreen").hidden = false; page = 0; show(); enter($("bookScreen")); }
+const stopVoice = () => { const a = document.getElementById("vnAudio"); if (a) a.pause(); };
+function backToBook() { stopVoice(); $("famScreen").hidden = true; $("bookScreen").hidden = false; page = 0; show(); enter($("bookScreen")); }
 
 function go(dir) {
   const to = page + dir;
@@ -436,10 +449,12 @@ document.addEventListener("dblclick", e => e.preventDefault());
 
 // ---------- Family edition: scrolling page ----------
 function renderScroll(d, o = {}) {
-  const head = o.head !== false, ph = (src, pos) => src ? `<div class="ph"><img alt="" draggable="false" src="${src}" style="object-position:${pos || "50% 50%"}"></div>` : `<div class="ph">photo coming soon</div>`;
+  const head = o.head !== false;
+  const shape = ar => { const m = /([\d.]+)\s*\/\s*([\d.]+)/.exec(ar || ""); if (!m) return ""; const r = Math.min(1.7, Math.max(.56, m[1] / m[2])); return ` style="aspect-ratio:${r.toFixed(3)}"`; };
+  const ph = (src, pos, ar) => src ? `<div class="ph"${shape(ar)}><img alt="" draggable="false" src="${src}" style="object-position:${pos || "50% 50%"}"></div>` : `<div class="ph">photo coming soon</div>`;
   const card = (c, n, extra = "") => `<article class="fam-card reveal" style="--r:${n % 2 ? .8 : -.8}deg">
-      <div class="fam-photo" style="--pr:${n % 2 ? -2.5 : 2.5}deg">${ph(c.photo, c.pos)}${extra}</div>
-      <div class="fam-num">${c.num}</div><h2 class="fam-title" style="font-size:${c.title.length > 26 ? 36 : 46}px">${esc(c.title)}</h2><p class="fam-text">${esc(c.text)}</p>
+      <div class="fam-photo" style="--pr:${n % 2 ? -2.5 : 2.5}deg">${ph(c.photo, c.pos, c.ar)}${extra}</div>
+      ${c.num ? `<div class="fam-num">${c.num}</div>` : ""}${c.title ? `<h2 class="fam-title" style="font-size:${c.title.length > 26 ? 36 : 46}px">${esc(c.title)}</h2>` : ""}${c.text ? `<p class="fam-text">${esc(c.text)}</p>` : ""}
     </article>`;
   $("fam").innerHTML = `
     ${head ? `<header class="fam-head">
@@ -457,9 +472,27 @@ function renderScroll(d, o = {}) {
       <p class="fam-text">${esc(d.strip.text)}</p>
       <div class="fam-swipe">swipe → </div>
     </section>
-    ${card(d.solo, d.chapters.length + 1)}
+    ${(d.extra || []).map((c, i) => card(c, d.chapters.length + 1 + i, stk(c.sticker || "heart", 5))).join("")}
+    ${card(d.solo, d.chapters.length + 1 + (d.extra || []).length)}
+    ${d.audio ? `<article class="fam-card reveal vn-card" style="--r:.6deg">
+      <div class="fam-num">${esc(d.audio.num || "")}</div><h2 class="fam-title" style="font-size:40px">${esc(d.audio.title || "")}</h2>
+      <div class="vn"><button class="vn-btn" id="vnBtn" type="button" aria-label="Play voice note">▶</button><div class="vn-track" id="vnTrack"><div class="vn-bar" id="vnBar"></div></div><span class="vn-time" id="vnTime">0:00</span></div>
+      <audio id="vnAudio" preload="metadata" src="${d.audio.src}"></audio>
+    </article>` : ""}
     <footer class="fam-end reveal" id="famEnd"><div class="fam-sign">${esc(d.end ? d.end.caption : d.cover.caption)}</div><div class="fam-btns"><button class="bk-again" id="famTop">↑ back to the top</button>${o.book ? '<button class="bk-again" id="famBook">↺ read the book again</button>' : ""}</div></footer>`;
   $("fam").classList.toggle("nohead", !head);
+  const au = $("vnAudio");
+  if (au) {
+    const btn = $("vnBtn"), bar = $("vnBar"), tm = $("vnTime"), tr = $("vnTrack");
+    const fmt = t => isFinite(t) ? Math.floor(t / 60) + ":" + String(Math.floor(t % 60)).padStart(2, "0") : "0:00";
+    btn.onclick = () => { if (au.paused) { au.play().catch(() => {}); } else au.pause(); };
+    au.onplay = () => { btn.textContent = "❚❚"; btn.setAttribute("aria-label", "Pause voice note"); };
+    au.onpause = () => { btn.textContent = "▶"; btn.setAttribute("aria-label", "Play voice note"); };
+    au.ontimeupdate = () => { bar.style.width = (au.duration ? au.currentTime / au.duration * 100 : 0) + "%"; tm.textContent = fmt(au.currentTime) + (au.duration ? " / " + fmt(au.duration) : ""); };
+    au.onloadedmetadata = () => { tm.textContent = "0:00 / " + fmt(au.duration); };
+    au.onended = () => { au.currentTime = 0; bar.style.width = "0%"; };
+    tr.onclick = e => { const r = tr.getBoundingClientRect(); if (au.duration) au.currentTime = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * au.duration; };
+  }
   const sc = $("famScreen"); sc.scrollTop = 0;
   $("famTop").onclick = () => sc.scrollTo({ top: 0, behavior: "smooth" });
   if ($("famBook")) $("famBook").onclick = backToBook;
@@ -526,6 +559,7 @@ addEventListener("keydown", e => { if ($("pinScreen").hidden) return; if (/^[0-9
 
 // ---------- Home: back to the PIN screen (enter the other PIN to switch version) ----------
 function goHome() {
+  stopVoice();
   buzz(8);
   document.querySelectorAll(".burst").forEach(e => e.remove());
   ["cover", "bookScreen", "famScreen"].forEach(id => { $(id).hidden = true; $(id).classList.remove("fade", "enter"); });
