@@ -260,10 +260,19 @@ html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692
 .s-no.fly { position: fixed; z-index: 40; margin: 0; transition: left .3s cubic-bezier(.3,1.5,.5,1), top .3s cubic-bezier(.3,1.5,.5,1), transform .3s; }
 .s-yes:focus-visible, .s-no:focus-visible { outline: 2px dashed #fff; outline-offset: 4px; }
 @media (prefers-reduced-motion: reduce) { .s-img, .s-card.plead .s-yes { animation: none; } .s-no.fly { transition: none; } }
+
+/* background music toggle (family edition) */
+.amb-btn { position: fixed; z-index: 20; top: calc(env(safe-area-inset-top, 0px) + 10px); right: 12px; min-width: 48px; min-height: 40px; padding: 0 14px; border: 0; border-radius: 999px; background: rgba(251,247,239,.16); color: #fff; font-size: 20px; line-height: 1; cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); box-shadow: inset 0 0 0 1px rgba(251,247,239,.22); touch-action: manipulation; transition: background .15s, transform .15s; }
+.amb-btn:active { background: rgba(251,247,239,.32); transform: scale(.94); }
+.amb-btn:focus-visible { outline: 2px dashed #fff; outline-offset: 3px; }
+.amb-btn[hidden] { display: none; }
+.amb-btn.off { opacity: .8; }
 </style>
 </head><body>
 <div id="ambient" aria-hidden="true"></div>
 <button class="home-btn" id="homeBtn" hidden aria-label="Back to the PIN screen">⌂ home</button>
+<audio id="amb" loop preload="auto"><source src="book/audio/tenu-sang-rakhna.mp3" type="audio/mpeg"><source src="book/audio/tenu-sang-rakhna.m4a" type="audio/mp4"></audio>
+<button class="amb-btn" id="ambBtn" hidden type="button" aria-label="Turn the background music off" aria-pressed="true">🔊</button>
 
 <div class="screen" id="pinScreen">
   <div class="pin-card">
@@ -341,7 +350,7 @@ const familyData = {
   ],
   strip: { num:"Swipe through", title:"More moments", text:"Happy birthday Mansi, we all love you so much. We are happy that we got you. You complete our family.",
     frames: ["book/photos/fam-6-temple.jpg", "book/photos/fam-2-booth.jpg", "book/photos/fam-3-selfie.jpg", "book/photos/fam-4-tree.jpg", "book/photos/fam-5-cake.jpg"] },
-  solo: { num:"The last one", title:"Just you", text:"Happy birthday Mansi, we all love you so much. We are happy that we got you. You complete our family.", photo:"book/photos/fam-solo.jpg", pos:"50% 30%" }
+  solo: { num:"The last one", title:"Just you", text:"Happy birthday Mansi, we all love you so much. We are happy that we got you. You complete our family.", photo:"book/photos/ms-udaipur.jpg", ar:"1100 / 1467", pos:"50% 40%" }
 };
 
 // Mansi's scroll section, shown after the flip-book ("keep going"): 2 photo cards -> swipe strip -> solo.
@@ -372,10 +381,8 @@ const mansiScroll = {
       { src:"book/photos/strip-18.jpg", ar:"562 / 1000" },
       { src:"book/photos/strip-19.jpg", ar:"1000 / 563" }
     ] },
-  // photo-only card shown between the strip and the closing card
-  extra: [ { photo:"book/photos/ms-path.jpg", ar:"787 / 1400", pos:"50% 45%", sticker:"heart" } ],
   audio: { src:"book/audio/note.m4a", num:"One more thing", title:"A voice note for you" },
-  solo: { num:"The last one", title:"I'm genuinely happy you're part of my story.", text:"I don't know what every chapter will look like, but I want to keep collecting these little moments with you.\n\nI love you, Mansi. ❤️", photo:"book/photos/ms-udaipur.jpg", ar:"1100 / 1467", pos:"50% 40%" },
+  solo: { num:"The last one", title:"I'm genuinely happy you're part of my story.", text:"I don't know what every chapter will look like, but I want to keep collecting these little moments with you.\n\nI love you, Mansi. ❤️", photo:"book/photos/ms-path.jpg", ar:"787 / 1400", pos:"50% 45%" },
   end: { caption: "Love you forever ♡" }
 };
 let data = mansiData;
@@ -562,6 +569,7 @@ function drawPin() { pinDots.innerHTML = Array.from({ length: Math.max(3, entry.
 let unlocking = false;
 function unlock(mode) {
   unlocking = true; setMode(mode); preload(data); buzz([10, 50, 18]);
+  if (mode === "family") ambStart(); else ambStop();
   pinCard.classList.add("ok"); pinMsg.textContent = mode === "family" ? "welcome ♡" : "welcome, birthday girl ♡";
   setTimeout(() => { $("pinScreen").classList.add("fade"); }, 650);
   setTimeout(() => { $("pinScreen").hidden = true; $("homeBtn").hidden = false; if (mode === "mansi") { resetSurprise(); $("surprise").classList.remove("fade"); $("surprise").hidden = false; enter($("surprise")); } else { $("cover").hidden = false; fit(); enter($("cover")); } }, 1150);
@@ -586,6 +594,7 @@ addEventListener("keydown", e => { if ($("pinScreen").hidden) return; if (/^[0-9
 // ---------- Home: back to the PIN screen (enter the other PIN to switch version) ----------
 function goHome() {
   stopVoice();
+  ambStop();
   resetSurprise();
   buzz(8);
   document.querySelectorAll(".burst").forEach(e => e.remove());
@@ -643,6 +652,28 @@ sYes.addEventListener("click", () => {
   buzz([10, 40, 14]); $("surprise").classList.add("fade");
   setTimeout(() => { $("surprise").hidden = true; $("cover").hidden = false; fit(); enter($("cover")); }, 450);
 });
+
+// ---------- background music (family edition only): quiet, looping, with an on/off toggle ----------
+// The song file is book/audio/tenu-sang-rakhna.mp3 (or .m4a). If it is missing, the toggle stays hidden.
+const amb = $("amb"), ambBtn = $("ambBtn"), AMB_VOL = .2;
+let ambReady = false, ambActive = false, ambOn = true, ambFade = null;
+amb.volume = 0;
+const ambFadeTo = (v, done) => { clearInterval(ambFade); ambFade = setInterval(() => { const d = v - amb.volume; if (Math.abs(d) < .02) { amb.volume = v; clearInterval(ambFade); if (done) done(); } else amb.volume = Math.max(0, Math.min(1, amb.volume + Math.sign(d) * .02)); }, 60); };
+function ambSync() {
+  ambBtn.hidden = !(ambActive && (ambReady || amb.readyState >= 2));
+  ambBtn.textContent = ambOn ? "🔊" : "🔇"; ambBtn.classList.toggle("off", !ambOn);
+  ambBtn.setAttribute("aria-pressed", String(ambOn)); ambBtn.setAttribute("aria-label", ambOn ? "Turn the background music off" : "Turn the background music on");
+}
+function ambPlay() { const r = amb.play(); if (r && r.catch) r.catch(() => { ambOn = false; ambSync(); }); ambFadeTo(AMB_VOL); }
+function ambStart() { ambActive = true; ambOn = true; amb.volume = 0; ambPlay(); ambSync(); }   // called from the PIN tap, so the browser allows sound
+function ambStop() { ambActive = false; clearInterval(ambFade); amb.pause(); amb.volume = 0; try { amb.currentTime = 0; } catch (e) {} ambSync(); }
+["canplay", "loadeddata", "playing"].forEach(ev => amb.addEventListener(ev, () => { ambReady = true; ambSync(); }));
+ambBtn.addEventListener("click", () => {
+  buzz(8);
+  if (ambOn) { ambOn = false; ambFadeTo(0, () => amb.pause()); } else { ambOn = true; ambPlay(); }
+  ambSync();
+});
+document.addEventListener("visibilitychange", () => { if (document.hidden) amb.pause(); else if (ambActive && ambOn) amb.play().catch(() => {}); });
 
 drawPin(); enter($("pinScreen"));
 </script>
