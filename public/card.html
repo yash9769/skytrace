@@ -325,7 +325,7 @@ html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692
 const B = "book", P = "book/photos";
 const mansiData = {
   age: "23",
-  cover: { greeting: ["Happy Birthday baby!","Another year of being you, and","somehow you keep making life a little","better just by being in it. ♡"], photo: P+"/cover-walk.jpg", pos: "50% 72%", caption: "I love you!" },
+  cover: { greeting: ["Happy Birthday baby!","Another year of being you, and","somehow you keep making life a little","better just by being in it. ♡"], photo: P+"/cover-lake.jpg", pos: "50% 40%", caption: "I love you!" },
   chapters: [
     { num:"Chapter 01", title:"The beginning", text:"Who knew our random chats, endless Haa, Achaaa and Okayyy would become such a beautiful part of our lives? ❤️", photo:P+"/ch1-thane.jpg", pos:"50% 38%", sticker:"heart" },
     { num:"Chapter 02", title:"Our language", text:"From addressing each other as Mis Mansi and Mr. Das to calling each other Mithudiiiii, Doba, Chatora and Chatori! What a fun journey it's been! 😂❤️", photo:P+"/ch2-balcony.jpg", pos:"50% 62%", sticker:"stars" },
@@ -338,19 +338,26 @@ const mansiData = {
 };
 
 // Family version: one scrolling page. Edit text here; photos live in book/photos/.
-//  front page (photo 1) -> chapters (photos 2-5) -> horizontal film strip -> solo photo.
+//  front page (cover photo) -> 13 photo cards scrolling down.
+const FAM_MSG = "Happy birthday Mansi, we all love you so much. We are happy that we got you. You complete our family.";
 const familyData = {
   age: "23",
   cover: { greeting: ["Happy Birthday Mansi!", "Twenty-three years of laughter,", "love and so many memories.", "From all of us, with love ♡"], photo: "book/photos/family-cover.jpg", pos: "50% 30%", caption: "With love, your family" },
   chapters: [
-    { num:"Chapter 01", title:"Pure fun", text:"Happy birthday Mansi, we all love you so much. We are happy that we got you. You complete our family.", photo:"book/photos/fam-2-booth.jpg", pos:"50% 42%", sticker:"stars" },
-    { num:"Chapter 02", title:"Selfie time", text:"Happy birthday Mansi, we all love you so much. We are happy that we got you. You complete our family.", photo:"book/photos/fam-3-selfie.jpg", pos:"50% 28%", sticker:"cupcake" },
-    { num:"Chapter 03", title:"Festive vibes", text:"Happy birthday Mansi, we all love you so much. We are happy that we got you. You complete our family.", photo:"book/photos/fam-4-tree.jpg", pos:"50% 55%", sticker:"stars" },
-    { num:"Chapter 04", title:"Cake and cuddles", text:"Happy birthday Mansi, we all love you so much. We are happy that we got you. You complete our family.", photo:"book/photos/fam-5-cake.jpg", pos:"50% 56%", sticker:"envelope" }
-  ],
-  strip: { num:"Swipe through", title:"More moments", text:"Happy birthday Mansi, we all love you so much. We are happy that we got you. You complete our family.",
-    frames: ["book/photos/fam-6-temple.jpg", "book/photos/fam-2-booth.jpg", "book/photos/fam-3-selfie.jpg", "book/photos/fam-4-tree.jpg", "book/photos/fam-5-cake.jpg"] },
-  solo: { num:"The last one", title:"Just you", text:"Happy birthday Mansi, we all love you so much. We are happy that we got you. You complete our family.", photo:"book/photos/ms-udaipur.jpg", ar:"1100 / 1467", pos:"50% 40%" }
+    { num:"Chapter 01", title:"Mari Pakki Dushman 😂", text:"From Younger Brother\nHappy Birthday, Didi! You're my biggest supporter and my favourite headache! 😂\nGame tetli fight kariye, tu hamesha mari favourite rahesh. ❤️\nKeep smiling, keep shining and don't forget my birthday treat! 😜🎂", photo:"book/photos/fam-11.jpg", ar:"825 / 1100", pos:"50% 40%", sticker:"stars" },
+    { num:"Chapter 02", title:"Mara Jigar No Tukdo 😂❤️", text:"You are not just my sister, but my best friend and an important part of my life. ❤️\nGame etli fights kariye ke ekbijane heran kariye, you'll always be special to me. 🥹\nMay you always stay happy, achieve all your dreams and keep smiling.\nHamesha tari sathe chhu, love you endlessly! Happy Birthday, my favourite girl! 🎂💕", photo:"book/photos/fam-03.jpg", ar:"825 / 1100", pos:"50% 40%", sticker:"cupcake" },
+    { num:"Chapter 03", title:"Mari Dikri ❤️", text:"Hamesha khush rehje ane tara badha sapna pura thay. ❤️\nBappa tane hamesha khush rakhe ane jivan ma khub aagal vadhare.\nBas aavi j hasta rehje ane potanu dhyan rakhje. Happy Birthday, beta! ❤️", photo:"book/photos/fam-13.jpg", ar:"825 / 1100", pos:"50% 40%", sticker:"envelope" },
+    { num:"Chapter 04", title:"Mari Vahali 🥰", text:"Mara mate tu hamesha nani j rahesh, tari darek khushi mara mate bahu mahatvani chhe. ❤️\nBhagwan tane badhu saru aape ane tara jivan ma kyarey koi kami na rahe.\nJamti rehje, hasta rehje ane potanu dhyan rakhje. Khub prem, Mumma! 🥹❤️", photo:"book/photos/fam-05.jpg", ar:"825 / 1100", pos:"50% 40%", sticker:"stars" },
+    { photo:"book/photos/fam-01.jpg", ar:"825 / 1100", pos:"50% 40%", text:FAM_MSG, sticker:"cupcake" },
+    { photo:"book/photos/fam-02.jpg", ar:"825 / 1100", pos:"50% 40%", text:FAM_MSG, sticker:"envelope" },
+    { photo:"book/photos/fam-04.jpg", ar:"825 / 1100", pos:"50% 40%", text:FAM_MSG, sticker:"stars" },
+    { photo:"book/photos/fam-06.jpg", ar:"825 / 1100", pos:"50% 40%", text:FAM_MSG, sticker:"cupcake" },
+    { photo:"book/photos/fam-07.jpg", ar:"825 / 1100", pos:"50% 40%", text:FAM_MSG, sticker:"envelope" },
+    { photo:"book/photos/fam-08.jpg", ar:"825 / 1100", pos:"50% 40%", text:FAM_MSG, sticker:"stars" },
+    { photo:"book/photos/fam-09.jpg", ar:"825 / 1100", pos:"50% 40%", text:FAM_MSG, sticker:"cupcake" },
+    { photo:"book/photos/fam-10.jpg", ar:"1100 / 825", pos:"50% 40%", text:FAM_MSG, sticker:"envelope" },
+    { photo:"book/photos/fam-12.jpg", ar:"1100 / 825", pos:"50% 40%", text:FAM_MSG, sticker:"stars" }
+  ]
 };
 
 // Mansi's scroll section, shown after the flip-book ("keep going"): 2 photo cards -> swipe strip -> solo.
@@ -498,15 +505,15 @@ function renderScroll(d, o = {}) {
       <div class="fam-scroll">scroll down ↓</div>
     </header>` : ""}
     ${d.chapters.map((c, n) => card(c, n, stk(c.sticker, n % 2 ? 6 : -4))).join("")}
-    <section class="fam-stripsec reveal">
+    ${d.strip ? `<section class="fam-stripsec reveal">
       <div class="fam-num">${d.strip.num}</div><h2 class="fam-title">${esc(d.strip.title)}</h2>
       <div class="strip${d.strip.variable ? " var" : ""}" id="strip" aria-label="Photo strip, swipe sideways">${d.strip.frames.map(f => `<figure class="frame"${f.ar ? ` style="aspect-ratio:${f.ar}"` : ""}><img alt="" draggable="false"${f.ar ? ' loading="lazy"' : ""} src="${f.src || f}" style="object-position:${f.pos || "50% 50%"}"></figure>`).join("")}</div>
       <div class="strip-dots${d.strip.frames.length > 10 ? " count" : ""}" id="stripDots" aria-hidden="true">${d.strip.frames.length > 10 ? `<span>1 / ${d.strip.frames.length}</span>` : d.strip.frames.map(() => "<i></i>").join("")}</div>
       <p class="fam-text">${esc(d.strip.text)}</p>
       <div class="fam-swipe">swipe → </div>
-    </section>
+    </section>` : ""}
     ${(d.extra || []).map((c, i) => card(c, d.chapters.length + 1 + i, stk(c.sticker || "heart", 5))).join("")}
-    ${card(d.solo, d.chapters.length + 1 + (d.extra || []).length)}
+    ${d.solo ? card(d.solo, d.chapters.length + 1 + (d.extra || []).length) : ""}
     ${d.audio ? `<article class="fam-card reveal vn-card" style="--r:.6deg">
       <div class="fam-num">${esc(d.audio.num || "")}</div><h2 class="fam-title" style="font-size:40px">${esc(d.audio.title || "")}</h2>
       <div class="vn"><button class="vn-btn" id="vnBtn" type="button" aria-label="Play voice note">▶</button><div class="vn-track" id="vnTrack"><div class="vn-bar" id="vnBar"></div></div><span class="vn-time" id="vnTime">0:00</span></div>
@@ -529,13 +536,16 @@ function renderScroll(d, o = {}) {
   const sc = $("famScreen"); sc.scrollTop = 0;
   $("famTop").onclick = () => sc.scrollTo({ top: 0, behavior: "smooth" });
   if ($("famBook")) $("famBook").onclick = backToBook;
-  const strip = $("strip"), dotEls = [...$("stripDots").children], total = strip.children.length;
+  const strip = $("strip");
+  if (strip) {
+  const dotEls = [...$("stripDots").children], total = strip.children.length;
   const setDot = () => {
     const r = strip.getBoundingClientRect(), mid = r.left + r.width / 2; let best = 0, bd = 1e9;
     [...strip.children].forEach((f, k) => { const b = f.getBoundingClientRect(), d = Math.abs(b.left + b.width / 2 - mid); if (d < bd) { bd = d; best = k; } });
     if (total > 10) dotEls[0].textContent = (best + 1) + " / " + total; else dotEls.forEach((e, k) => e.classList.toggle("on", k === best));
   };
   strip.addEventListener("scroll", setDot, { passive: true }); setDot();
+  }
   let done = false;
   if (!("IntersectionObserver" in window)) { sc.querySelectorAll(".reveal").forEach(e => e.classList.add("in")); return; }
   const io = new IntersectionObserver(es => es.forEach(e => {
@@ -561,7 +571,7 @@ stage.onclick = () => {
 // ---------- PIN gate ----------
 // PIN -> which version opens. Change the numbers here. NOTE: this is client-side, so it is a
 // door, not a vault: anyone who views the page source can read these.
-const PINS = { "123": "mansi", "456": "family" };
+const PINS = { "2519": "mansi", "2003": "family" };
 const PIN_MAX = 6;
 let entry = "";
 const pinDots = $("pinDots"), pinMsg = $("pinMsg"), pinCard = document.querySelector(".pin-card");
