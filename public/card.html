@@ -271,7 +271,7 @@ html.family .bk-book { --w: min(calc(100vw - 24px), calc((100dvh - 150px) * .692
 </head><body>
 <div id="ambient" aria-hidden="true"></div>
 <button class="home-btn" id="homeBtn" hidden aria-label="Back to the PIN screen">⌂ home</button>
-<audio id="amb" loop preload="none"><source src="book/audio/tenu-sang-rakhna.mp3" type="audio/mpeg"><source src="book/audio/tenu-sang-rakhna.m4a" type="audio/mp4"></audio>
+<audio id="amb" loop preload="none"></audio>
 <button class="amb-btn" id="ambBtn" hidden type="button" aria-label="Turn the background music off" aria-pressed="true">🔊</button>
 
 <div class="screen" id="pinScreen">
@@ -526,8 +526,8 @@ function renderScroll(d, o = {}) {
     const btn = $("vnBtn"), bar = $("vnBar"), tm = $("vnTime"), tr = $("vnTrack");
     const fmt = t => isFinite(t) ? Math.floor(t / 60) + ":" + String(Math.floor(t % 60)).padStart(2, "0") : "0:00";
     btn.onclick = () => { if (au.paused) { au.play().catch(() => {}); } else au.pause(); };
-    au.onplay = () => { btn.textContent = "❚❚"; btn.setAttribute("aria-label", "Pause voice note"); };
-    au.onpause = () => { btn.textContent = "▶"; btn.setAttribute("aria-label", "Play voice note"); };
+    au.onplay = () => { btn.textContent = "❚❚"; btn.setAttribute("aria-label", "Pause voice note"); ambHold(true); };
+    au.onpause = () => { btn.textContent = "▶"; btn.setAttribute("aria-label", "Play voice note"); ambHold(false); };
     au.ontimeupdate = () => { bar.style.width = (au.duration ? au.currentTime / au.duration * 100 : 0) + "%"; tm.textContent = fmt(au.currentTime) + (au.duration ? " / " + fmt(au.duration) : ""); };
     au.onloadedmetadata = () => { tm.textContent = "0:00 / " + fmt(au.duration); };
     au.onended = () => { au.currentTime = 0; bar.style.width = "0%"; };
@@ -579,7 +579,7 @@ function drawPin() { pinDots.innerHTML = Array.from({ length: Math.max(3, entry.
 let unlocking = false;
 function unlock(mode) {
   unlocking = true; setMode(mode); preload(data); buzz([10, 50, 18]);
-  if (mode === "family") ambStart(); else ambStop();
+  ambStart(mode);
   pinCard.classList.add("ok"); pinMsg.textContent = mode === "family" ? "welcome ♡" : "welcome, birthday girl ♡";
   setTimeout(() => { $("pinScreen").classList.add("fade"); }, 650);
   setTimeout(() => { $("pinScreen").hidden = true; $("homeBtn").hidden = false; if (mode === "mansi") { resetSurprise(); $("surprise").classList.remove("fade"); $("surprise").hidden = false; enter($("surprise")); } else { $("cover").hidden = false; fit(); enter($("cover")); } }, 1150);
@@ -666,7 +666,8 @@ sYes.addEventListener("click", () => {
 // ---------- background music (family edition only): quiet, looping, with an on/off toggle ----------
 // The song file is book/audio/tenu-sang-rakhna.mp3 (or .m4a). If it is missing, the toggle stays hidden.
 const amb = $("amb"), ambBtn = $("ambBtn"), AMB_VOL = 1;   // the song file itself is already mixed quiet (iPhones ignore page volume), so the page plays it at full file level
-let ambReady = false, ambActive = false, ambOn = true, ambFade = null;
+let ambReady = false, ambActive = false, ambOn = true, ambFade = null, ambHeld = false;
+const AMB_SRC = { family: "book/audio/tenu-sang-rakhna.mp3", mansi: "book/audio/mere-bina.mp3" };   // one song per edition; each is only downloaded after its own PIN
 amb.volume = 0;
 const ambFadeTo = (v, done) => { clearInterval(ambFade); ambFade = setInterval(() => { const d = v - amb.volume; if (Math.abs(d) < .06) { amb.volume = v; clearInterval(ambFade); if (done) done(); } else amb.volume = Math.max(0, Math.min(1, amb.volume + Math.sign(d) * .06)); }, 60); };
 function ambSync() {
@@ -674,16 +675,17 @@ function ambSync() {
   ambBtn.textContent = ambOn ? "🔊" : "🔇"; ambBtn.classList.toggle("off", !ambOn);
   ambBtn.setAttribute("aria-pressed", String(ambOn)); ambBtn.setAttribute("aria-label", ambOn ? "Turn the background music off" : "Turn the background music on");
 }
-function ambPlay() { const r = amb.play(); if (r && r.catch) r.catch(() => { ambOn = false; ambSync(); }); ambFadeTo(AMB_VOL); }
-function ambStart() { ambActive = true; ambOn = true; amb.volume = 0; ambPlay(); ambSync(); }   // called from the PIN tap, so the browser allows sound
-function ambStop() { ambActive = false; clearInterval(ambFade); amb.pause(); amb.volume = 0; try { amb.currentTime = 0; } catch (e) {} ambSync(); }
+function ambPlay() { if (ambHeld) return; const r = amb.play(); if (r && r.catch) r.catch(() => { ambOn = false; ambSync(); }); ambFadeTo(AMB_VOL); }
+function ambStart(m) { const src = AMB_SRC[m]; if (!amb.getAttribute("src") || amb.getAttribute("src") !== src) { amb.src = src; ambReady = false; } ambActive = true; ambOn = true; ambHeld = false; amb.volume = 0; ambPlay(); ambSync(); }   // called from the PIN tap, so the browser allows sound
+function ambHold(on) { ambHeld = on; if (on) { ambFadeTo(0, () => amb.pause()); } else if (ambActive && ambOn) ambPlay(); }   // the voice note takes over: music pauses while it plays, then comes back
+function ambStop() { ambActive = false; ambHeld = false; clearInterval(ambFade); amb.pause(); amb.volume = 0; try { amb.currentTime = 0; } catch (e) {} ambSync(); }
 ["canplay", "loadeddata", "playing"].forEach(ev => amb.addEventListener(ev, () => { ambReady = true; ambSync(); }));
 ambBtn.addEventListener("click", () => {
   buzz(8);
   if (ambOn) { ambOn = false; ambFadeTo(0, () => amb.pause()); } else { ambOn = true; ambPlay(); }
   ambSync();
 });
-document.addEventListener("visibilitychange", () => { if (document.hidden) amb.pause(); else if (ambActive && ambOn) amb.play().catch(() => {}); });
+document.addEventListener("visibilitychange", () => { if (document.hidden) amb.pause(); else if (ambActive && ambOn && !ambHeld) amb.play().catch(() => {}); });
 
 drawPin(); enter($("pinScreen"));
 </script>
