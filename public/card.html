@@ -338,26 +338,39 @@ const mansiData = {
 };
 
 // Family version: one scrolling page. Edit text here; photos live in book/photos/.
-//  front page (cover photo) -> 13 photo cards scrolling down.
+//  front page (photo 1) -> chapters (photos 2-5) -> horizontal film strip -> solo photo.
 const FAM_MSG = "Happy birthday Mansi, we all love you so much. We are happy that we got you. You complete our family.";
 const familyData = {
   age: "23",
   cover: { greeting: ["Happy Birthday Mansi!", "Twenty-three years of laughter,", "love and so many memories.", "From all of us, with love ♡"], photo: "book/photos/family-cover.jpg", pos: "50% 30%", caption: "With love, your family" },
   chapters: [
-    { num:"Chapter 01", title:"Mari Pakki Dushman 😂", text:"From Younger Brother\nHappy Birthday, Didi! You're my biggest supporter and my favourite headache! 😂\nGame tetli fight kariye, tu hamesha mari favourite rahesh. ❤️\nKeep smiling, keep shining and don't forget my birthday treat! 😜🎂", photo:"book/photos/fam-11.jpg", ar:"825 / 1100", pos:"50% 40%", sticker:"stars" },
-    { num:"Chapter 02", title:"Mara Jigar No Tukdo 😂❤️", text:"You are not just my sister, but my best friend and an important part of my life. ❤️\nGame etli fights kariye ke ekbijane heran kariye, you'll always be special to me. 🥹\nMay you always stay happy, achieve all your dreams and keep smiling.\nHamesha tari sathe chhu, love you endlessly! Happy Birthday, my favourite girl! 🎂💕", photo:"book/photos/fam-03.jpg", ar:"825 / 1100", pos:"50% 40%", sticker:"cupcake" },
-    { num:"Chapter 03", title:"Mari Dikri ❤️", text:"Hamesha khush rehje ane tara badha sapna pura thay. ❤️\nBappa tane hamesha khush rakhe ane jivan ma khub aagal vadhare.\nBas aavi j hasta rehje ane potanu dhyan rakhje. Happy Birthday, beta! ❤️", photo:"book/photos/fam-13.jpg", ar:"825 / 1100", pos:"50% 40%", sticker:"envelope" },
-    { num:"Chapter 04", title:"Mari Vahali 🥰", text:"Mara mate tu hamesha nani j rahesh, tari darek khushi mara mate bahu mahatvani chhe. ❤️\nBhagwan tane badhu saru aape ane tara jivan ma kyarey koi kami na rahe.\nJamti rehje, hasta rehje ane potanu dhyan rakhje. Khub prem, Mumma! 🥹❤️", photo:"book/photos/fam-05.jpg", ar:"825 / 1100", pos:"50% 40%", sticker:"stars" },
-    { photo:"book/photos/fam-01.jpg", ar:"825 / 1100", pos:"50% 40%", text:FAM_MSG, sticker:"cupcake" },
-    { photo:"book/photos/fam-02.jpg", ar:"825 / 1100", pos:"50% 40%", text:FAM_MSG, sticker:"envelope" },
-    { photo:"book/photos/fam-04.jpg", ar:"825 / 1100", pos:"50% 40%", text:FAM_MSG, sticker:"stars" },
-    { photo:"book/photos/fam-06.jpg", ar:"825 / 1100", pos:"50% 40%", text:FAM_MSG, sticker:"cupcake" },
-    { photo:"book/photos/fam-07.jpg", ar:"825 / 1100", pos:"50% 40%", text:FAM_MSG, sticker:"envelope" },
-    { photo:"book/photos/fam-08.jpg", ar:"825 / 1100", pos:"50% 40%", text:FAM_MSG, sticker:"stars" },
-    { photo:"book/photos/fam-09.jpg", ar:"825 / 1100", pos:"50% 40%", text:FAM_MSG, sticker:"cupcake" },
-    { photo:"book/photos/fam-10.jpg", ar:"1100 / 825", pos:"50% 40%", text:FAM_MSG, sticker:"envelope" },
-    { photo:"book/photos/fam-12.jpg", ar:"1100 / 825", pos:"50% 40%", text:FAM_MSG, sticker:"stars" }
-  ]
+    { num:"Chapter 01", title:"Mari Pakki Dushman 😂", text:"From Younger Brother\nHappy Birthday, Didi! You're my biggest supporter and my favourite headache! 😂\nGame tetli fight kariye, tu hamesha mari favourite rahesh. ❤️\nKeep smiling, keep shining and don't forget my birthday treat! 😜🎂", photo:"book/photos/fam-2-booth.jpg", pos:"50% 42%", sticker:"stars" },
+    { num:"Chapter 02", title:"Mara Jigar No Tukdo 😂❤️", text:"You are not just my sister, but my best friend and an important part of my life. ❤️\nGame etli fights kariye ke ekbijane heran kariye, you'll always be special to me. 🥹\nMay you always stay happy, achieve all your dreams and keep smiling.\nHamesha tari sathe chhu, love you endlessly! Happy Birthday, my favourite girl! 🎂💕", photo:"book/photos/fam-3-selfie.jpg", pos:"50% 28%", sticker:"cupcake" },
+    { num:"Chapter 03", title:"Mari Dikri ❤️", text:"Hamesha khush rehje ane tara badha sapna pura thay. ❤️\nBappa tane hamesha khush rakhe ane jivan ma khub aagal vadhare.\nBas aavi j hasta rehje ane potanu dhyan rakhje. Happy Birthday, beta! ❤️", photo:"book/photos/fam-4-tree.jpg", pos:"50% 55%", sticker:"stars" },
+    { num:"Chapter 04", title:"Mari Vahali 🥰", text:"Mara mate tu hamesha nani j rahesh, tari darek khushi mara mate bahu mahatvani chhe. ❤️\nBhagwan tane badhu saru aape ane tara jivan ma kyarey koi kami na rahe.\nJamti rehje, hasta rehje ane potanu dhyan rakhje. Khub prem, Mumma! 🥹❤️", photo:"book/photos/fam-5-cake.jpg", pos:"50% 56%", sticker:"envelope" }
+  ],
+  strip: { num:"Swipe through", title:"More moments", text:FAM_MSG, variable: true,
+    frames: [
+    { src:"book/photos/fam-6-temple.jpg", ar:"1000 / 1333" },
+    { src:"book/photos/fam-2-booth.jpg", ar:"1000 / 1333" },
+    { src:"book/photos/fam-3-selfie.jpg", ar:"1000 / 1333" },
+    { src:"book/photos/fam-4-tree.jpg", ar:"1000 / 1333" },
+    { src:"book/photos/fam-5-cake.jpg", ar:"1000 / 1333" },
+    { src:"book/photos/fam-01.jpg", ar:"825 / 1100" },
+    { src:"book/photos/fam-02.jpg", ar:"825 / 1100" },
+    { src:"book/photos/fam-03.jpg", ar:"825 / 1100" },
+    { src:"book/photos/fam-04.jpg", ar:"825 / 1100" },
+    { src:"book/photos/fam-05.jpg", ar:"825 / 1100" },
+    { src:"book/photos/fam-06.jpg", ar:"825 / 1100" },
+    { src:"book/photos/fam-07.jpg", ar:"825 / 1100" },
+    { src:"book/photos/fam-08.jpg", ar:"825 / 1100" },
+    { src:"book/photos/fam-09.jpg", ar:"825 / 1100" },
+    { src:"book/photos/fam-10.jpg", ar:"1100 / 825" },
+    { src:"book/photos/fam-11.jpg", ar:"825 / 1100" },
+    { src:"book/photos/fam-12.jpg", ar:"1100 / 825" },
+    { src:"book/photos/fam-13.jpg", ar:"825 / 1100" }
+    ] },
+  solo: { num:"The last one", title:"Just you", text:FAM_MSG, photo:"book/photos/ms-udaipur.jpg", ar:"1100 / 1467", pos:"50% 40%" }
 };
 
 // Mansi's scroll section, shown after the flip-book ("keep going"): 2 photo cards -> swipe strip -> solo.
